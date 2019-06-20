@@ -1,0 +1,38 @@
+language: generic
+
+matrix:
+  include:
+    - os: osx
+      addons:
+        homebrew:
+          packages:
+          - mono
+          - mono-libgdiplus
+          update: true
+    - os: linux
+      dist: xenial
+
+before_install:
+  - |
+    # mono
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+      sudo apt install apt-transport-https ca-certificates
+      echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+      sudo apt-get update
+      sudo apt install mono-complete
+    fi
+  - which msbuild
+
+install:
+  - cd ../..
+  - git clone https://github.com/QuantConnect/Lean.git
+  - cd Lean
+  - wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+  - mono nuget.exe restore QuantConnect.Lean.sln
+
+script:
+  - msbuild QuantConnect.Lean.sln
+  - ls -laF
+  - ls -laF Algorithm.Python
+  - ls -laF Launcher/bin/Debug

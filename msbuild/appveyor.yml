@@ -1,0 +1,16 @@
+version: 1.0.{build}
+clone_script:
+- cmd: |-
+    git clone https://github.com/QuantConnect/Lean.git
+    cd Lean
+before_build:
+- cmd: |-
+    nuget restore QuantConnect.Lean.sln
+build:
+  project: Lean\QuantConnect.Lean.sln
+  verbosity: normal
+after_build:
+- cmd: |-
+    dir Algorithm.Python
+    dir Launcher\bin\Debug
+test: off
