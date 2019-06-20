@@ -1,0 +1,29 @@
+version: 1.0.{build}
+build_script:
+- ps: |-
+    $url = 'https://aka.ms/vs/16/release/vs_buildtools.exe'
+    Invoke-WebRequest $url -OutFile vs_buildtools.exe
+    
+    $dest = 'packages'
+    $arguments = @(
+        '--layout',
+        $dest,
+        '--add',
+        'Microsoft.VisualStudio.Workload.MSBuildTools',
+        '--add',
+        'Microsoft.VisualStudio.Component.NuGet',
+        '--wait',
+        '--passive'
+    )
+    $p = Start-Process -FilePath vs_buildtools.exe -ArgumentList $arguments -PassThru
+    $p | Wait-Process
+    if ($p.ExitCode -ne 0)
+    {
+        Write-Error "failed with code $($p.ExitCode)"
+    }
+    
+    Get-ChildItem -Path $dest
+test: off
+artifacts:
+- path: packages
+  name: vs
