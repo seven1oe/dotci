@@ -1,0 +1,26 @@
+version: 1.0.{build}
+init:
+- cmd: set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%MINICONDA%\\Library\\bin;%PATH%
+environment:
+  MINICONDA: C:\Miniconda3-x64
+install:
+- cmd: >-
+    mkdir conda && cd conda
+
+    conda -V
+
+    python -m site
+
+    conda create -n python35 python=3.5 -y
+
+    activate python35
+
+    python -m site
+
+    conda install -c Quantopian zipline -y
+
+    pip -V
+
+    pip install backtrader
+build: off
+test: off
