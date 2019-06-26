@@ -4,23 +4,16 @@ init:
 environment:
   MINICONDA: C:\Miniconda3-x64
 install:
-- cmd: >-
-    mkdir conda && cd conda
-
+- cmd: |-
+    mkdir one && cd one
     conda -V
-
     python -m site
-
     conda create -n python35 python=3.5 -y
-
     activate python35
-
     python -m site
-
     conda install -c Quantopian zipline -y
-
     pip -V
-
-    pip install backtrader
+    pip install backtrader[plotting]
+    dir
 build: off
 test: off
