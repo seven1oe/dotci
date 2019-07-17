@@ -1,0 +1,16 @@
+version: 1.0.{build}
+environment:
+  BASH: C:\msys64\usr\bin\bash.exe
+  HOME: C:\msys64\home
+  MSYSTEM: MINGW64
+build_script:
+- cmd: >-
+    %BASH% -lc "wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && tar -xvzf ta-lib-0.4.0-src.tar.gz"
+
+    %BASH% -lc "cd ta-lib && LDFLAGS="-lm" ./configure --prefix=/home/build && make install"
+
+    xcopy /S /E %HOME%\build %APPVEYOR_BUILD_FOLDER%\build\
+test: off
+artifacts:
+- path: build
+  name: ta-lib
