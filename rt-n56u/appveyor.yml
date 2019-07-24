@@ -1,0 +1,42 @@
+version: 1.0.{build}
+
+image: Ubuntu1604
+
+environment:
+  BUILD_OUTPUT: /tmp/log
+  matrix:
+    - PRODUCT_ID: 360WIFI-P2
+    - PRODUCT_ID: PSG1218
+
+install:
+  - sudo apt-get update
+  - sudo apt-get install -y autoconf automake autopoint bison build-essential flex gawk gettext git gperf libtool pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev texinfo python-docutils
+
+before_build:
+  - cd /opt
+  - sudo git clone https://github.com/andy-padavan/rt-n56u.git
+
+  - cd rt-n56u
+  - sudo git remote add mod https://github.com/seven1oe/rt-n56u4p.git
+  - sudo git fetch mod
+  - sudo git merge mod/master --no-edit --quiet
+
+build_script:
+  - cd /opt/rt-n56u/toolchain-mipsel
+  - sudo ./clean_sources
+  - sudo ./build_toolchain >$BUILD_OUTPUT 2>&1
+
+  - cd /opt/rt-n56u/trunk
+  - if [ $PRODUCT_ID = "PSG1218" ]; then sudo cp configs/templates/psg1218_base.config .config; fi
+  - sudo ./clear_tree
+  - sudo ./build_firmware >$BUILD_OUTPUT 2>&1
+
+  - cp -r /opt/rt-n56u/trunk/images $APPVEYOR_BUILD_FOLDER/images
+
+after_build:
+  - tail -500 $BUILD_OUTPUT
+
+test: off
+artifacts:
+- path: images
+  name: padavan

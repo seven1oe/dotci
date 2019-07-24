@@ -2,32 +2,76 @@ language: generic
 
 dist: xenial
 
+addons:
+  apt:
+    update: true
+    packages:
+      - autoconf
+      - automake
+      - autopoint
+      - bison
+      - build-essential
+      - flex
+      - gawk
+      - gettext
+      - git
+      - gperf
+      - libtool
+      - pkg-config
+      - zlib1g-dev
+      - libgmp3-dev
+      - libmpc-dev
+      - libmpfr-dev
+      - texinfo
+      - python-docutils
+
+env:
+  global:
+    - BUILD_OUTPUT=/tmp/log
+  matrix:
+    - PRODUCT_ID=360WIFI-P2
+    - PRODUCT_ID=PSG1218
+
 before_install:
-  - sudo apt-get update
-  - sudo apt-get -y install autoconf automake autopoint bison build-essential flex gawk gettext git gperf libtool pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev texinfo python-docutils
+  - cd /opt
+  - sudo git clone https://github.com/andy-padavan/rt-n56u.git
+
+  - cd rt-n56u
+  - sudo git remote add mod https://github.com/seven1oe/rt-n56u4p.git 
+  - sudo git fetch mod
+  - sudo git merge mod/master --no-edit --quiet
 
 install:
-  - cd /opt
-  - sudo git clone https://github.com/seven1oe/rt-n56u4p.git rt-n56u
-  # - cd rt-n56u
-  # - sudo git remote add rt-n56u https://github.com/andy-padavan/rt-n56u.git
-  # - sudo git fetch rt-n56u
-  # - sudo git merge rt-n56u/master --no-edit
-
-script:
-
-  - while sleep 5m; do echo -e "\n"; done &
+  - |
+    while sleep 10s; do
+       tail -30 $BUILD_OUTPUT
+       > $BUILD_OUTPUT
+    done &
 
   - cd /opt/rt-n56u/toolchain-mipsel
-
   - sudo ./clean_sources
+  - sudo ./build_toolchain >$BUILD_OUTPUT 2>&1
 
-  - sudo ./build_toolchain >/tmp/build.log 2>&1 || tail -100 /tmp/build.log; test $? -ne 0
-
+script:
   - cd /opt/rt-n56u/trunk
-
+  - if [ $PRODUCT_ID = "PSG1218" ]; then sudo cp configs/templates/psg1218_base.config .config; fi
   - sudo ./clear_tree
+  - sudo ./build_firmware >$BUILD_OUTPUT 2>&1
 
-  - sudo ./build_firmware >/tmp/build.log 2>&1 || tail -100 /tmp/build.log; test $? -ne 0
-  
-  - kill %1
+after_script:
+  # - kill %1
+  - tail -500 $BUILD_OUTPUT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
