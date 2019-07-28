@@ -1,0 +1,46 @@
+language: generic
+
+dist: bionic
+
+addons:
+  apt:
+    update: true
+    packages:
+      - subversion
+      - build-essential
+      - libncurses5-dev
+      - zlib1g-dev
+      - gawk
+      - git
+      - ccache
+      - gettext
+      - libssl-dev
+      - xsltproc
+      - zip
+
+before_install:
+  - mkdir Working && cd Working
+  - git clone https://github.com/openwrt/openwrt.git
+
+install:
+  - cd openwrt
+  - ./scripts/feeds update -a
+  - ./scripts/feeds install -a
+
+script:
+
+after_script:
+
+
+
+
+
+
+
+
+
+
+
+
+
+

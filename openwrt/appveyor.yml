@@ -1,0 +1,14 @@
+version: 1.0.{build}
+image: Ubuntu1804
+build_script:
+  - sudo apt update
+  - sudo DEBIAN_FRONTEND=noninteractive apt-get -y install subversion build-essential libncurses5-dev zlib1g-dev gawk git ccache gettext libssl-dev xsltproc zip
+  - git clone https://github.com/openwrt/openwrt.git
+  - cd openwrt
+  - ./scripts/feeds update -a
+  - ./scripts/feeds install -a
+  - cd .. && tar -czf openwrt.tar.gz openwrt
+test: off
+artifacts:
+- path: openwrt.tar.gz
+  name: openwrt
