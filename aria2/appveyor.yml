@@ -3,14 +3,18 @@ environment:
   BASH: C:\msys64\usr\bin\bash.exe
   HOME: C:\msys64\home
   MSYSTEM: MINGW64
+
+before_build:
+- ps: |-
+    @"
+    pacman -S --needed --noconfirm base-devel zlib-devel sqlite git unzip zip tar gmp gmp-devel libssh2 libssh2-devel openssl-devel
+    git clone https://github.com/aria2/aria2 --depth=1
+    cd aria2
+    autoreconf -i
+    ./configure
+    "@ | Set-Content $env:HOME\build.sh
+
 build_script:
-- cmd: >-
-    %BASH% -lc "wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && tar -xvzf ta-lib-0.4.0-src.tar.gz"
-
-    %BASH% -lc "cd ta-lib && LDFLAGS="-lm" ./configure --prefix=/home/build && make install"
-
-    xcopy /S /E %HOME%\build %APPVEYOR_BUILD_FOLDER%\build\
+- cmd: |-
+    %BASH% -lc "./build.sh"
 test: off
-artifacts:
-- path: build
-  name: ta-lib
