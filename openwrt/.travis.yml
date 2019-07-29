@@ -19,11 +19,13 @@ addons:
       - zip
 
 before_install:
-  - mkdir Working && cd Working
-  - git clone https://github.com/openwrt/openwrt.git
+  - cd /opt
+  - sudo git clone https://github.com/openwrt/openwrt.git
+  - sudo chown -R $USER openwrt
+  - sudo chgrp -R $USER openwrt
 
 install:
-  - cd openwrt
+  - cd /opt/openwrt
   - ./scripts/feeds update -a
   - ./scripts/feeds install -a
 
