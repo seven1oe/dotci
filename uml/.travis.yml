@@ -1,0 +1,93 @@
+language: generic
+
+dist: bionic
+
+env:
+  global:
+    - KERNEL_VERSION=4.x
+    - KERNEL_SUBVERSION=4.19.63
+    - KERNEL_MIRROR=cdn.kernel.org/pub/linux/kernel
+
+    - ARCHLINUX_VERSION=2019.08.01
+    - ARCHLINUX_MIRROR=mirrors.evowise.com/archlinux
+    - ARCHLINUX_SERVER_PREFIX="Server = http://"
+
+    - UML_DIR=~/archlinux
+    - UML_TAR=uml.tar.xz
+
+before_install:
+  - sudo mkdir $UML_DIR
+
+  - wget https://$KERNEL_MIRROR/v$KERNEL_VERSION/linux-$KERNEL_SUBVERSION.tar.xz
+  - tar -xJf linux-$KERNEL_SUBVERSION.tar.xz
+
+  - wget http://$ARCHLINUX_MIRROR/iso/$ARCHLINUX_VERSION/archlinux-bootstrap-$ARCHLINUX_VERSION-x86_64.tar.gz
+  - tar xzf archlinux-bootstrap-$ARCHLINUX_VERSION-x86_64.tar.gz || true
+
+install:
+  - pushd linux-$KERNEL_SUBVERSION
+  # config kernel
+  - make defconfig ARCH=um
+  - |-
+    sed 's/^..//' >> .config << EOF
+    CONFIG_TCP_CONG_ADVANCED=y
+    CONFIG_TCP_CONG_BBR=y
+    CONFIG_DEFAULT_BBR=y
+    CONFIG_DEFAULT_TCP_CONG="bbr"
+  - make ARCH=um allnoconfig KCONFIG_ALLCONFIG=.config
+  # build kernel
+  - make ARCH=um vmlinux
+  - strip vmlinux
+  - ./vmlinux --showconfig
+  # install kernel
+  - sudo cp vmlinux $UML_DIR
+  # #
+  - popd
+
+
+  - pushd root.x86_64
+  # config bootstrap
+  - echo "$ARCHLINUX_SERVER_PREFIX$ARCHLINUX_MIRROR/\$repo/os/\$arch" >> etc/pacman.d/mirrorlist
+  - |
+    cat > bin/install.sh << EOF
+    pacman-key --init
+    pacman-key --populate archlinux
+    pacstrap /mnt base
+  - chmod +x bin/install.sh
+  # install rootfs
+  - sudo mount --bind . .
+  - sudo mount --bind $UML_DIR ./mnt
+  - sudo bin/arch-chroot . env -i /bin/bash -c install.sh
+  - sudo umount ./mnt
+  - sudo umount .
+  # #
+  - popd
+
+script:
+  - while sleep 5m; do echo -e " "; done &
+
+  - pushd $UML_DIR
+  - sudo tar cJf $(dirs -l +1)/$UML_TAR .
+  - popd
+
+after_success:
+  - sudo split -b 200M -d -a 1 $UML_TAR $UML_TAR.
+  - |
+    for x in $(ls $UML_TAR.*); do
+      curl -T $x -useven1oe:$BINTRAY_API https://api.bintray.com/content/seven1oe/generic/artifacts/$TRAVIS_BUILD_NUMBER/$TRAVIS_BUILD_NUMBER/
+    done
+
+# deploy:
+  # provider: releases
+  # api_key: $GITHUB_TOKEN
+  # file: $UML_TAR
+  # skip_cleanup: true
+
+after_script:
+  - ls -alF
+
+
+
+
+
+
