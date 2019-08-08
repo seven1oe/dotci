@@ -1,0 +1,42 @@
+language: generic
+
+dist: bionic
+
+env:
+  global:
+    - KERNEL_VERSION=4.x
+    - KERNEL_SUBVERSION=4.19.63
+    - KERNEL_MIRROR=cdn.kernel.org/pub/linux/kernel
+
+install:
+  - wget https://$KERNEL_MIRROR/v$KERNEL_VERSION/linux-$KERNEL_SUBVERSION.tar.xz
+  - tar -xJf linux-$KERNEL_SUBVERSION.tar.xz
+
+script:
+  - pushd linux-$KERNEL_SUBVERSION
+  # config kernel
+  - make defconfig ARCH=um
+  - |-
+    cat >> .config << EOF
+    CONFIG_TCP_CONG_ADVANCED=y
+    CONFIG_TCP_CONG_BBR=y
+    CONFIG_DEFAULT_BBR=y
+    CONFIG_DEFAULT_TCP_CONG="bbr"
+  - make ARCH=um allnoconfig KCONFIG_ALLCONFIG=.config
+  # build kernel
+  - make ARCH=um vmlinux
+  - strip vmlinux
+  - ./vmlinux --showconfig
+  # install kernel
+  - cp vmlinux $(dirs -l +1)
+  # #
+  - popd
+
+after_success:
+  - curl -T vmlinux -useven1oe:$BINTRAY_API https://api.bintray.com/content/seven1oe/generic/artifacts/$TRAVIS_BUILD_NUMBER/$TRAVIS_BUILD_NUMBER/
+
+
+
+
+
+
