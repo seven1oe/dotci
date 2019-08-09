@@ -1,0 +1,25 @@
+language: generic
+
+dist: bionic
+
+env:
+  global:
+    - DOCKER_IMAGE=nginx
+    - DOCKER_TAG=mainline-alpine
+
+before_install:
+  - docker pull $DOCKER_IMAGE:$DOCKER_TAG
+
+install:
+  - docker save $DOCKER_IMAGE:$DOCKER_TAG -o $DOCKER_IMAGE.$DOCKER_TAG.tar
+
+script:
+  - tar xf $DOCKER_IMAGE.$DOCKER_TAG.tar
+  - export layers=$(cat manifest.json | python -c "import json; import sys; print ' '.join(json.load(sys.stdin)[0]['Layers'])")
+  - export layer=$(cat manifest.json | python -c "import json; import sys; print json.load(sys.stdin)[0]['Layers'][0]")
+  - tar --concatenate --file=$layers
+  # - tar --list --file=$layer
+  - mv $layer $DOCKER_IMAGE.tar
+
+after_success:
+  - curl -T $DOCKER_IMAGE.tar -useven1oe:$BINTRAY_API https://api.bintray.com/content/seven1oe/generic/artifacts/$TRAVIS_BUILD_NUMBER/$TRAVIS_BUILD_NUMBER/
