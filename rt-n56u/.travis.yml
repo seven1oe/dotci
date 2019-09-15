@@ -57,6 +57,10 @@ script:
   - if [ $PRODUCT_ID = "PSG1218" ]; then sudo cp configs/templates/psg1218_base.config .config; fi
   - sudo ./clear_tree
   - sudo ./build_firmware >$BUILD_OUTPUT 2>&1
+  - sudo tar cf images_$PRODUCT_ID.tar images
+
+after_success:
+  - curl -T images_$PRODUCT_ID.tar -useven1oe:$BINTRAY_API https://api.bintray.com/content/seven1oe/generic/artifacts/$TRAVIS_BUILD_NUMBER/$TRAVIS_BUILD_NUMBER/
 
 after_script:
   # - kill %1
