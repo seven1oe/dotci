@@ -1,21 +1,20 @@
 version: 1.0.{build}
 build_script:
 - ps: |-
-    $url = 'https://aka.ms/vs/16/release/vs_buildtools.exe'
-    Invoke-WebRequest $url -OutFile vs_buildtools.exe
+    $installer = 'vs_Community.exe'
+    $url = 'https://aka.ms/vs/16/release/'
+    Invoke-WebRequest $url$installer -OutFile $installer
     
     $dest = 'packages'
     $arguments = @(
         '--layout',
         $dest,
         '--add',
-        'Microsoft.VisualStudio.Workload.MSBuildTools',
-        '--add',
-        'Microsoft.VisualStudio.Component.NuGet',
+        'Microsoft.VisualStudio.Workload.ManagedDesktop',
         '--wait',
         '--passive'
     )
-    $p = Start-Process -FilePath vs_buildtools.exe -ArgumentList $arguments -PassThru
+    $p = Start-Process -FilePath $installer -ArgumentList $arguments -PassThru
     $p | Wait-Process
     if ($p.ExitCode -ne 0)
     {
