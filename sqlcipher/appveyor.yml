@@ -1,0 +1,16 @@
+version: 1.0.{build}
+environment:
+  BASH: C:\msys64\usr\bin\bash.exe
+  HOME: C:\msys64\home
+  MSYSTEM: MINGW64
+build_script:
+- cmd: |-
+    %BASH% -lc "git clone https://github.com/sqlcipher/sqlcipher.git"
+    %BASH% -lc "cd sqlcipher && ./configure --prefix=/home/build CFLAGS='-DSQLITE_HAS_CODEC' LDFLAGS='/mingw64/lib/libcrypto.a /mingw64/lib/libz.a -lws2_32'"
+    %BASH% -lc "cd sqlcipher && make sqlite3.c && make && make install"
+    %BASH% -lc "cd sqlcipher && cp sqlite3.c /home/build/"
+    xcopy /S /E %HOME%\build %APPVEYOR_BUILD_FOLDER%\build\
+test: off
+artifacts:
+- path: build
+  name: sqlcipher
