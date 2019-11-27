@@ -3,12 +3,26 @@ environment:
   BASH: C:\msys64\usr\bin\bash.exe
   HOME: C:\msys64\home
   MSYSTEM: MINGW64
+  
+  MS_OPENSSL_VERSION: 1.0.2t
+  MS_SQLCIPHER_VERSION: v4.2.0
+  
+  MS_WORKING_DIR: /home/build
+  MS_OPENSSL_DIR: /home/build/openssl
+  MS_SQLCIPHER_DIR: /home/build/sqlcipher
 build_script:
 - cmd: |-
-    %BASH% -lc "git clone https://github.com/sqlcipher/sqlcipher.git"
-    %BASH% -lc "cd sqlcipher && ./configure --prefix=/home/build CFLAGS='-DSQLITE_HAS_CODEC' LDFLAGS='/mingw64/lib/libcrypto.a /mingw64/lib/libz.a -lws2_32'"
+    %BASH% -lc "mkdir $MS_WORKING_DIR"
+    
+    %BASH% -lc "wget -q https://www.openssl.org/source/openssl-$MS_OPENSSL_VERSION.tar.gz && tar xzf openssl-$MS_OPENSSL_VERSION.tar.gz"
+    %BASH% -lc "cd openssl-$MS_OPENSSL_VERSION && ./Configure --prefix=$MS_OPENSSL_DIR shared mingw64"
+    %BASH% -lc "cd openssl-$MS_OPENSSL_VERSION && make && make install_sw"
+    
+    %BASH% -lc "git clone https://github.com/sqlcipher/sqlcipher.git -b $MS_SQLCIPHER_VERSION"
+    %BASH% -lc "cd sqlcipher && ./configure --prefix=$MS_SQLCIPHER_DIR CFLAGS=\"-DSQLITE_HAS_CODEC -I$MS_OPENSSL_DIR/include -L$MS_OPENSSL_DIR/lib\" LDFLAGS=\"$MS_OPENSSL_DIR/lib/libcrypto.a $MSYSTEM_PREFIX/lib/libz.a -lws2_32 -lgdi32\""
     %BASH% -lc "cd sqlcipher && make sqlite3.c && make && make install"
-    %BASH% -lc "cd sqlcipher && cp sqlite3.c /home/build/"
+    %BASH% -lc "cd sqlcipher && cp sqlite3.c $MS_SQLCIPHER_DIR"
+    
     xcopy /S /E %HOME%\build %APPVEYOR_BUILD_FOLDER%\build\
 test: off
 artifacts:
