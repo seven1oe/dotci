@@ -1,0 +1,20 @@
+version: 1.0.{build}
+
+environment:
+  CYG_ROOT: C:\cygwin64
+  CYG_BASH: C:\cygwin64\bin\bash
+  CYG_BUILD_DIR: '%CYG_ROOT%\home\appveyor\build'
+
+install:
+  - '%CYG_ROOT%\setup-x86_64.exe -gnq -P autoconf,autogen,automake,gcc-core,gcc-g++'
+  - '%CYG_ROOT%\bin\cygcheck -dc'
+
+build_script:
+  - '%CYG_BASH% -lc $APPVEYOR_BUILD_FOLDER/ss.sh'
+  - copy %CYG_ROOT%\bin\cygwin1.dll %CYG_BUILD_DIR%\shadowsocks\bin
+  - 7z a ss.zip %CYG_BUILD_DIR%\shadowsocks
+
+test: off
+
+artifacts:
+- path: ss.zip
