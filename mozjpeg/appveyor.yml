@@ -1,0 +1,15 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+build_script:
+  - git clone https://github.com/mozilla/mozjpeg.git
+
+  - cd mozjpeg
+  - mkdir build
+  - cd build
+  - cmake .. -G "Visual Studio 15 2017" -DPNG_SUPPORTED=NO
+  - msbuild mozjpeg.sln
+
+  - 7z a %APPVEYOR_BUILD_FOLDER%\mozjpeg.zip %APPVEYOR_BUILD_FOLDER%\mozjpeg\build\Debug\*-static.exe
+test: off
+artifacts:
+- path: mozjpeg.zip
