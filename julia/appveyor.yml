@@ -1,0 +1,29 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+
+environment:
+  JULIA_INSTALLER: julia-installer.exe
+  JULIA_PATH: C:\julia
+
+install:
+  - curl -fsSL -o %JULIA_INSTALLER% https://julialangnightlies-s3.julialang.org/bin/winnt/x64/julia-latest-win64.exe
+  - '%JULIA_INSTALLER% /VERYSILENT /DIR=%JULIA_PATH%'
+  - set PATH=%JULIA_PATH%\bin;%PATH%
+
+  - julia -e "using InteractiveUtils;
+              versioninfo()"
+  # - xcopy /S /E "C:\Program Files\7-zip" %JULIA_PATH%\bin\
+  # - dir "C:\Program Files\7-zip"
+  # - dir %JULIA_PATH%\bin
+
+build_script:
+  # - julia -e "using Pkg;
+              # Pkg.add(\"MXNet\")"
+  - git clone https://github.com/apache/incubator-mxnet.git -b 1.6.0
+  - cd incubator-mxnet\julia
+  # - julia -e "using Pkg;
+              # Pkg.add(PackageSpec(path=\".\"))"
+  - julia -e "using Pkg;
+              Pkg.activate(\".\");
+              Pkg.build()"
+test: off
