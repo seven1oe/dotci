@@ -1,0 +1,26 @@
+version: 1.0.{build}
+environment:
+  BASE: C:\Environment
+  MINICONDA: '%BASE%\Miniconda3'
+  NAME: pytorch
+  ARTIFACT: '%NAME%.7z'
+
+install:
+  - mkdir %BASE%
+  - move C:\Miniconda3-x64 %MINICONDA%
+  - set PATH=%MINICONDA%;%MINICONDA%\Scripts;%PATH%
+
+build_script:
+  - conda create -n %NAME% python=3.7 -y
+  - activate %NAME%
+
+  - conda install -y -c conda-forge jupyterlab
+  - conda install -y -c pytorch pytorch torchvision cpuonly
+  - conda install -y scikit-learn pandas
+  - pip install matplotlib
+
+  - 7z a %ARTIFACT% %MINICONDA%\envs
+
+test: off
+artifacts:
+- path: '%ARTIFACT%'
