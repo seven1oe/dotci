@@ -1,28 +1,22 @@
 version: 1.0.{build}
+environment:
+  # 15=vs-2017
+  # 16=vs-2019
+  # https://docs.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-community?view=vs-2019
+  VERSION: 15
+  INSTALLER: vs_Community.exe
+  URL: https://aka.ms/vs/%VERSION%/release/
+  DEST: vs
+  ARTIFACT: '%DEST%.7z'
+
 build_script:
-- ps: |-
-    $installer = 'vs_Community.exe'
-    $url = 'https://aka.ms/vs/16/release/'
-    Invoke-WebRequest $url$installer -OutFile $installer
-    
-    $dest = 'packages'
-    $arguments = @(
-        '--layout',
-        $dest,
-        '--add',
-        'Microsoft.VisualStudio.Workload.ManagedDesktop',
-        '--wait',
-        '--passive'
-    )
-    $p = Start-Process -FilePath $installer -ArgumentList $arguments -PassThru
-    $p | Wait-Process
-    if ($p.ExitCode -ne 0)
-    {
-        Write-Error "failed with code $($p.ExitCode)"
-    }
-    
-    Get-ChildItem -Path $dest
+  - curl -fsSL -o %INSTALLER% %URL%%INSTALLER%
+  - '%INSTALLER% --wait --passive
+                 --layout %DEST%
+                 --add Microsoft.VisualStudio.Workload.DataScience'
+
+  # - dir %DEST%
+  - 7z a %ARTIFACT% %DEST%
 test: off
 artifacts:
-- path: packages
-  name: vs
+- path: '%ARTIFACT%'
