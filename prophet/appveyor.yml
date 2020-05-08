@@ -1,11 +1,17 @@
 version: 1.0.{build}
 environment:
-  MINICONDA: C:\Environment\miniconda3
+  BASE: C:\Environment
+
+  MINGW64: C:\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64
+
+  MINICONDA: '%BASE%\miniconda3'
   NAME: prophet
-  ARTIFACT: '%NAME%.7z'
   PYTHON: 3.7
+  ARTIFACT: '%NAME%.7z'
 
 install:
+  - set PATH=%MINGW64%\bin;%PATH%
+
   - curl -fsSL -o miniconda3.exe https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
   - miniconda3.exe /S /D=%MINICONDA%
   - set PATH=%MINICONDA%;%MINICONDA%\Scripts;%PATH%
@@ -14,24 +20,12 @@ build_script:
   - conda create -n %NAME% python=%PYTHON% -y
   - activate %NAME%
 
-  - conda install libpython m2w64-toolchain_win-64 -y
-  - ps: |
-      Set-Content -Path "$env:MINICONDA\envs\$env:NAME\Lib\distutils\distutils.cfg" -Value @"
-      [build]
-      compiler=mingw32
-      
-      [build_ext]
-      compiler=mingw32
-      "@
-
+  - conda install libpython -y
   # This order is required
   - pip install pystan
   - pip install convertdate
   - pip install pandas lunarcalendar holidays
   - pip install fbprophet
-
-  # It can be installed by one command
-  # - conda install -c conda-forge fbprophet -y
 
   - 7z a %ARTIFACT% %MINICONDA%\envs
 
