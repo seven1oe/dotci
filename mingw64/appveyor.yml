@@ -1,0 +1,18 @@
+version: 1.0.{build}
+environment:
+  BASH: C:\msys64\usr\bin\bash.exe
+  HOME: C:\msys64\home\appveyor
+  ARTIFACT: mingw64.7z
+build_script:
+  # - '%BASH% -lc "pacman -Sy --noconfirm && pacman -S --noconfirm zstd"'
+  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-toolchain"'
+  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-{zlib,gmp,mpfr,mpc,isl}"'
+  - '%BASH% -lc "ls -laF /var/cache/pacman/pkg"'
+  - '%BASH% -lc "(ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -I zstd -xf) || exit 0"'
+  - '%BASH% -lc "(ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -xJf) || exit 0"'
+  - '%BASH% -lc "ls -laF"'
+
+  - 7z a %ARTIFACT% %HOME%\mingw64
+test: off
+artifacts:
+- path: '%ARTIFACT%'
