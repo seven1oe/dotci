@@ -1,29 +1,16 @@
 version: 1.0.{build}
 environment:
-  BASE: C:\Environment
-
-  MINICONDA: '%BASE%\miniconda3'
+  MINICONDA: C:\Environment\miniconda3
   NAME: prophet
   PYTHON: 3.7
-  ARTIFACT_MINICONDA: '%NAME%.7z'
-
-  MINGW64: '%BASE%\mingw64'
-  BASH: C:\msys64\usr\bin\bash.exe
-  HOME: C:\msys64\home\appveyor
-  ARTIFACT_MINGW: mingw64.7z
+  ARTIFACT: '%NAME%.7z'
 
 install:
   - curl -fsSL -o miniconda3.exe https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
   - miniconda3.exe /S /D=%MINICONDA%
   - set PATH=%MINICONDA%;%MINICONDA%\Scripts;%PATH%
 
-  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-toolchain"'
-  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-{zlib,gmp,mpfr,mpc,isl}"'
-  - '%BASH% -lc "ls -laF /var/cache/pacman/pkg"'
-  - '%BASH% -lc "(ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -I zstd -xf) || exit 0"'
-  - '%BASH% -lc "(ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -xJf) || exit 0"'
-  - move %HOME%\mingw64 %MINGW64%
-  - set PATH=%MINGW64%\bin;%PATH%
+  - set PATH=C:\msys64\mingw64\bin;C:\msys64\usr\bin;%PATH%
 
 build_script:
   - conda create -n %NAME% python=%PYTHON% -y
@@ -36,10 +23,8 @@ build_script:
   - pip install pandas lunarcalendar holidays
   - pip install fbprophet
 
-  - 7z a %ARTIFACT_MINICONDA% %MINICONDA%\envs
-  - 7z a %ARTIFACT_MINGW% %MINGW64%
+  - 7z a %ARTIFACT% %MINICONDA%\envs
 
 test: off
 artifacts:
-- path: '%ARTIFACT_MINICONDA%'
-- path: '%ARTIFACT_MINGW%'
+- path: '%ARTIFACT%'
