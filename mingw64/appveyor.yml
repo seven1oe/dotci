@@ -6,7 +6,7 @@ environment:
 build_script:
   # - '%BASH% -lc "pacman -Sy --noconfirm && pacman -S --noconfirm zstd"'
   - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-toolchain"'
-  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-{zlib,gmp,mpfr,mpc,isl}"'
+  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-{zlib,gmp,mpfr,mpc,isl,windows-default-manifest}"'
   - '%BASH% -lc "ls -laF /var/cache/pacman/pkg"'
   - '%BASH% -lc "(ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -I zstd -xf) || exit 0"'
   - '%BASH% -lc "(ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -xJf) || exit 0"'
