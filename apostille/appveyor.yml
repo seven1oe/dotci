@@ -1,14 +1,10 @@
 version: 1.0.{build}
 build_script:
-- cmd: >-
-    git clone https://github.com/sensepost/apostille.git
+  - git clone https://github.com/sensepost/apostille.git src
+  - cd src
+  - mvn package -Dmaven.test.skip=true
 
-    cd apostille
-
-    mvn package -Dmaven.test.skip=true
-
-    xcopy /S /E target\*.jar ..\target\
+  - 7z a ..\apostille.zip target\*.jar
 test: off
 artifacts:
-- path: target
-  name: apostille
+- path: apostille.zip
