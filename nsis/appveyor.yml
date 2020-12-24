@@ -1,0 +1,27 @@
+version: 1.0.{build}
+
+environment:
+  NSIS_VER: 3.06.1
+  ZLIB_VER: 1.2.11-h62dcd97_4
+
+install:
+  - mklink /H "%VS140COMNTOOLS%\..\..\VC\bin\amd64\ml.exe" "%VS140COMNTOOLS%\..\..\VC\bin\amd64\ml64.exe"
+  - call "%VS140COMNTOOLS%\..\..\VC\bin\amd64\vcvars64.bat"
+
+  - curl -fsSL -o nsis-%NSIS_VER%-src.tar.bz2 https://downloads.sourceforge.net/nsis/nsis-%NSIS_VER%-src.tar.bz2
+  - tar xjf nsis-%NSIS_VER%-src.tar.bz2
+
+  - curl -fsSL -o zlib-%ZLIB_VER%.tar.bz2 https://anaconda.org/anaconda/zlib/1.2.11/download/win-64/zlib-%ZLIB_VER%.tar.bz2
+  - tar xjf zlib-%ZLIB_VER%.tar.bz2 Library
+  - move Library\bin\zlib.dll Library\
+
+  - pip install scons
+
+build_script:
+  - cd nsis-%NSIS_VER%-src
+  - sed -i 's/m_target_type=TARGET_X86ANSI/m_target_type=TARGET_AMD64/' Source/build.cpp
+  - scons ZLIB_W32=%APPVEYOR_BUILD_FOLDER%/Library VERSION=%NSIS_VER% SKIPUTILS="NSIS Menu" SKIPDOC=all NSIS_CONFIG_LOG=no TARGET_ARCH=amd64 dist-zip
+
+test: off
+artifacts:
+- path: nsis-%NSIS_VER%-src\nsis-%NSIS_VER%amd64.zip
