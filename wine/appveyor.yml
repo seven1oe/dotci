@@ -1,0 +1,30 @@
+version: 1.0.{build}
+image: Ubuntu1804
+
+environment:
+  # DISPLAY: :99.0
+  WINEARCH: win32
+
+install:
+  - sudo dpkg --add-architecture i386
+  # libfaudio0
+  - wget -nc https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/Release.key
+  - sudo apt-key add Release.key
+  - sudo add-apt-repository 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/ ./'
+  # wine
+  - wget -nc https://dl.winehq.org/wine-builds/winehq.key
+  - sudo apt-key add winehq.key
+  - sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'
+  # install
+  - sudo apt update
+  - sudo apt install -y cabextract
+  - sudo apt install -y --install-recommends winehq-stable
+
+  - wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
+  - chmod +x winetricks
+  - sudo mv -v winetricks /usr/local/bin
+
+build_script:
+  - winetricks ie8
+
+test: off
