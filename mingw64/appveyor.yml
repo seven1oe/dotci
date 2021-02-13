@@ -1,18 +1,26 @@
 version: 1.0.{build}
-environment:
-  BASH: C:\msys64\usr\bin\bash.exe
-  HOME: C:\msys64\home\appveyor
-  ARTIFACT: mingw64.7z
-build_script:
-  # - '%BASH% -lc "pacman -Sy --noconfirm && pacman -S --noconfirm zstd"'
-  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-toolchain"'
-  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-{zlib,gmp,mpfr,mpc,isl,windows-default-manifest}"'
-  - '%BASH% -lc "ls -laF /var/cache/pacman/pkg"'
-  - '%BASH% -lc "(ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -I zstd -xf) || exit 0"'
-  - '%BASH% -lc "(ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -xJf) || exit 0"'
-  - '%BASH% -lc "ls -laF"'
 
-  - 7z a %ARTIFACT% %HOME%\mingw64
+environment:
+  ROOT: '%APPVEYOR_BUILD_FOLDER%\msys64'
+  BASH: '%ROOT%\usr\bin\bash.exe'
+  ARTIFACT: mingw64.7z
+
+install:
+  - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
+  - msys64\msys2_shell.cmd -defterm -no-start -c true
+
+build_script:
+  - '%BASH% -lc "pacman -Sy --noconfirm tar && paccache -r -k 0"'
+  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-toolchain"'
+  - '%BASH% -lc "pacman -Sg mingw-w64-x86_64-toolchain | sed \"s/^mingw-w64-x86_64-toolchain //\" | xargs -n1 pactree -s -u | sort -u"'
+
+  # - '%BASH% -lc "ls -laF /var/cache/pacman/pkg"'
+  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -I zstd -xf || true"'
+  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -xJf || true"'
+
+after_build:
+  - 7z a %ARTIFACT% %ROOT%\home\%USERNAME%\mingw64
+
 test: off
 artifacts:
 - path: '%ARTIFACT%'
