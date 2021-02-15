@@ -1,19 +1,66 @@
 version: 1.0.{build}
-init:
-- cmd: set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%MINICONDA%\\Library\\bin;%PATH%
 environment:
-  MINICONDA: C:\Miniconda3-x64
+  PYTHON: 3.7
+  # prophet
+  NAME: prophet
+  # ml
+  NAME: ml
+  # mar
+  NAME: mar
+
+  PYTHON: 2.7
+  # pefile
+  NAME: pefile
+
+  MINICONDA: C:\Environment\miniconda3
+  ARTIFACT: '%NAME%.7z'
+
+init:
+  - set PATH=C:\msys64\mingw64\bin;C:\msys64\usr\bin;%PATH%
+
 install:
-- cmd: |-
-    mkdir one && cd one
-    conda -V
-    python -m site
-    conda create -n python35 python=3.5 -y
-    activate python35
-    python -m site
-    conda install -c Quantopian zipline -y
-    pip -V
-    pip install backtrader[plotting]
-    dir
-build: off
+  - curl -fsSL -o miniconda3.exe https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
+  - miniconda3.exe /S /D=%MINICONDA%
+  - set PATH=%MINICONDA%;%MINICONDA%\Scripts;%PATH%
+
+build_script:
+  # *** test and quant ***
+  - conda -V
+  - python -m site
+  - conda create -n python35 python=3.5 -y
+  - activate python35
+  - python -m site
+  - conda install -c Quantopian zipline -y
+  - pip -V
+  - pip install backtrader[plotting]
+  - dir
+
+  - conda create -n %NAME% python=%PYTHON% -y
+  - activate %NAME%
+
+  # *** prophet ***
+  - conda install libpython -y
+  # This order is required
+  - pip install pystan
+  - pip install convertdate
+  - pip install pandas lunarcalendar holidays
+  - pip install fbprophet
+
+  # *** ml ***
+  # - conda install -y -c conda-forge jupyterlab
+  # - conda install -y -c pytorch pytorch torchvision cpuonly
+  # - conda install -y scikit-learn pandas
+  - pip install numpy scipy matplotlib sympy cesium scikit-learn jupyterlab pandas
+
+  # *** mar ***
+  - conda install -y backports.lzma
+  - pip install mar
+
+  # *** pefile ***
+  - pip install pefile
+
+  - 7z a %ARTIFACT% %MINICONDA%\envs\%NAME%
+
 test: off
+artifacts:
+- path: '%ARTIFACT%'
