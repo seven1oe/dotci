@@ -3,17 +3,18 @@ environment:
   # 15=vs-2017
   # 16=vs-2019
   # https://docs.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-community?view=vs-2019
-  VERSION: 15
+  # https://docs.microsoft.com/en-us/visualstudio/install/command-line-parameter-examples?view=vs-2019
+  VERSION: 16
   INSTALLER: vs_Community.exe
-  URL: https://aka.ms/vs/%VERSION%/release/
+
   DEST: vs
   ARTIFACT: '%DEST%.7z'
 
 build_script:
-  - curl -fsSL -o %INSTALLER% %URL%%INSTALLER%
+  - curl -fsSL -o %INSTALLER% https://aka.ms/vs/%VERSION%/release/%INSTALLER%
   - '%INSTALLER% --wait --passive
                  --layout %DEST%
-                 --add Microsoft.VisualStudio.Workload.DataScience'
+                 --add Microsoft.VisualStudio.Workload.NativeDesktop'
 
   # - dir %DEST%
   - 7z a %ARTIFACT% %DEST%
