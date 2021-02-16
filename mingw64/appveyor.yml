@@ -5,14 +5,20 @@ environment:
   BASH: '%ROOT%\usr\bin\bash.exe'
   ARTIFACT: mingw64.7z
 
+  GCC_VERSION: 9.3.0-2
+  GDB_VERSION: 9.2-4
+
 install:
   - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
   - msys64\msys2_shell.cmd -defterm -no-start -c true
 
 build_script:
-  - '%BASH% -lc "pacman -Sy --noconfirm tar && paccache -r -k 0"'
-  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-toolchain"'
-  - '%BASH% -lc "pacman -Sg mingw-w64-x86_64-toolchain | sed \"s/^mingw-w64-x86_64-toolchain //\" | xargs -n1 pactree -s -u | sort -u"'
+  - '%BASH% -lc "pacman -Sy --noconfirm tar"'
+  - '%BASH% -lc "pacman -Sc --noconfirm"'
+  - '%BASH% -lc "pacman -U --noconfirm https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-gcc-libs-$GCC_VERSION-any.pkg.tar.xz"'
+  - '%BASH% -lc "pacman -U --noconfirm https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-gcc-$GCC_VERSION-any.pkg.tar.xz"'
+  - '%BASH% -lc "pacman -U --noconfirm https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-gdb-$GDB_VERSION-any.pkg.tar.zst"'
+  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-make"'
 
   # - '%BASH% -lc "ls -laF /var/cache/pacman/pkg"'
   - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -I zstd -xf || true"'
