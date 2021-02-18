@@ -2,9 +2,11 @@ version: 1.0.{build}
 environment:
   # 15=vs-2017
   # 16=vs-2019
-  # https://docs.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-community?view=vs-2019
-  # https://docs.microsoft.com/en-us/visualstudio/install/command-line-parameter-examples?view=vs-2019
-  VERSION: 16
+  # https://docs.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-community?view=vs-2017
+  # https://docs.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-build-tools?view=vs-2017
+  # https://docs.microsoft.com/en-us/visualstudio/install/command-line-parameter-examples?view=vs-2017
+  VERSION: 15
+  # vs_BuildTools.exe
   INSTALLER: vs_Community.exe
 
   DEST: vs
@@ -14,7 +16,8 @@ build_script:
   - curl -fsSL -o %INSTALLER% https://aka.ms/vs/%VERSION%/release/%INSTALLER%
   - '%INSTALLER% --wait --passive
                  --layout %DEST%
-                 --add Microsoft.VisualStudio.Workload.NativeDesktop'
+                 --add Microsoft.VisualStudio.Workload.NativeDesktop
+                 --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64'
 
   # - dir %DEST%
   - 7z a %ARTIFACT% %DEST%
