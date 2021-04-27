@@ -7,6 +7,8 @@ environment:
   NAME: ml
   # mar
   NAME: mar
+  # frida
+  NAME: frida
 
   PYTHON: 2.7
   # pefile
@@ -35,6 +37,7 @@ build_script:
   - pip install backtrader[plotting]
   - dir
 
+  # ### FOR ALL ###
   - conda create -n %NAME% python=%PYTHON% -y
   - activate %NAME%
 
@@ -58,6 +61,9 @@ build_script:
 
   # *** pefile ***
   - pip install pefile
+  
+  # *** frida ***
+  - pip install frida-tools
 
   - 7z a %ARTIFACT% %MINICONDA%\envs\%NAME%
 
