@@ -3,10 +3,10 @@ version: 1.0.{build}
 environment:
   ROOT: '%APPVEYOR_BUILD_FOLDER%\msys64'
   BASH: '%ROOT%\usr\bin\bash.exe'
-  ARTIFACT: mingw64.7z
 
-  GCC_VERSION: 9.3.0-2
-  GDB_VERSION: 9.2-4
+  EXCLUDE: .BUILDINFO .MTREE .PKGINFO
+
+  ARTIFACT: mingw64.7z
 
 install:
   - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
@@ -14,17 +14,17 @@ install:
 
 build_script:
   - '%BASH% -lc "pacman -Sy --noconfirm tar"'
-  - '%BASH% -lc "pacman -Sc --noconfirm"'
-  - '%BASH% -lc "pacman -U --noconfirm https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-gcc-libs-$GCC_VERSION-any.pkg.tar.xz"'
-  - '%BASH% -lc "pacman -U --noconfirm https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-gcc-$GCC_VERSION-any.pkg.tar.xz"'
-  - '%BASH% -lc "pacman -U --noconfirm https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-gdb-$GDB_VERSION-any.pkg.tar.zst"'
-  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-make"'
+  - '%BASH% -lc "paccache -r -k 0"'
 
-  # - '%BASH% -lc "ls -laF /var/cache/pacman/pkg"'
-  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -I zstd -xf || true"'
-  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -xJf || true"'
+  # - '%BASH% -lc "pacman -Sg mingw-w64-x86_64-toolchain | sed \"s/^mingw-w64-x86_64-toolchain //\" | xargs -n1 pactree -s -u | sort -u"'
+  - '%BASH% -lc "pacman -Sw --noconfirm mingw-w64-x86_64-{gcc-libs,gcc,gdb,make}"'
+
+  - '%BASH% -lc "echo \"%EXCLUDE%\" | tr \" \" \"\n\" > exclude"'
+  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -X exclude -k -I zstd -xf || true"'
+  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -X exclude -k -xJf || true"'
 
 after_build:
+  - dir /AL /S %ROOT%\home\%USERNAME%\mingw64 || exit 0
   - 7z a %ARTIFACT% %ROOT%\home\%USERNAME%\mingw64
 
 test: off
