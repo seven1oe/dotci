@@ -1,0 +1,32 @@
+version: 1.0.{build}
+image: Ubuntu1804
+
+build_script:
+  - curl -fsSL "https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt" | base64 -d > plain.txt
+
+  - export IGNORE_PATTERN='^\!|\[|^@@|(https?://){0,1}[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
+  - export HEAD_FILTER_PATTERN='s#^(\|\|?)?(https?://)?##g'
+  - export TAIL_FILTER_PATTERN='s#/.*$|%2F.*$##g'
+  - export DOMAIN_PATTERN='([a-zA-Z0-9][-a-zA-Z0-9]*(\.[a-zA-Z0-9][-a-zA-Z0-9]*)+)'
+  - export WILDCARD_PATTERN='s#^(([a-zA-Z0-9]*\*[-a-zA-Z0-9]*)?(\.))?([a-zA-Z0-9][-a-zA-Z0-9]*(\.[a-zA-Z0-9][-a-zA-Z0-9]*)+)(\*[a-zA-Z0-9]*)?#\4#g'
+
+  - grep -vE $IGNORE_PATTERN plain.txt |
+      sed -r $HEAD_FILTER_PATTERN |
+      sed -r $TAIL_FILTER_PATTERN |
+      grep -E $DOMAIN_PATTERN |
+      sed -r $WILDCARD_PATTERN > daily.txt
+
+  - export DOT_PATTERN='s/\./\\./g'
+  - export PREFIX_PATTERN='s/^/(^|\\.)/'
+  - export SUFFIX_PATTERN='s/$/$/'
+
+  - sed $DOT_PATTERN daily.txt |
+      sed $PREFIX_PATTERN |
+      sed $SUFFIX_PATTERN |
+      awk '!x[$0]++' > list.acl
+
+  - sed -i '1i\[bypass_all]\n\n[proxy_list]' list.acl
+
+test: off
+artifacts:
+- path: list.acl
