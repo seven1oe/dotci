@@ -1,0 +1,23 @@
+version: 1.0.{build}
+
+environment:
+  BASE: C:\Environment\rust
+  CARGO_HOME: '%BASE%\cargo'
+  RUSTUP_HOME: '%BASE%\rustup'
+
+  HOST: x86_64-pc-windows-gnu
+  ARTIFACT: rust.7z
+
+install:
+  - curl -fsSL -o rustup-init.exe https://win.rustup.rs/x86_64
+  - rustup-init.exe -y --default-host %HOST% --profile minimal --component rustfmt clippy rust-src
+
+  - set PATH=%CARGO_HOME%\bin;%PATH%
+  - rustc --print sysroot
+
+build_script:
+  - 7z a %ARTIFACT% %BASE%
+
+test: off
+artifacts:
+- path: '%ARTIFACT%'
