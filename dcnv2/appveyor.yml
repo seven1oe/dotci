@@ -1,0 +1,60 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+
+environment:
+  VS150COMNTOOLS: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\
+  DISTUTILS_USE_SDK: 1
+
+  PYTHON: 3.7
+  NAME: python37
+
+  CUDA_URL: https://developer.nvidia.com/compute/cuda/10.0/Prod/local_installers/cuda_10.0.130_411.31_win10
+  CUDA_VERION: '10.0'
+
+  BUILD_DIR: '%APPVEYOR_BUILD_FOLDER%\..'
+  MINICONDA: C:\Environment\miniconda3
+
+install:
+  # *** vs ***
+  - call "%VS150COMNTOOLS%\..\..\VC\Auxiliary\Build\vcvars64.bat"
+
+  # *** cuda ***
+  - curl -fsSL -o cuda_win10.exe %CUDA_URL%
+  - cuda_win10.exe -s nvcc_%CUDA_VERION% cusparse_%CUDA_VERION% cusparse_dev_%CUDA_VERION% cublas_%CUDA_VERION% cublas_dev_%CUDA_VERION%
+  - set PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v%CUDA_VERION%\bin;%PATH%
+
+  - nvcc --version
+
+  # *** anaconda ***
+  - curl -fsSL -o miniconda3.exe https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
+  - miniconda3.exe /S /D=%MINICONDA%
+  - set PATH=%MINICONDA%;%MINICONDA%\Scripts;%PATH%
+
+  - conda create -n %NAME% python=%PYTHON% -y
+  - activate %NAME%
+
+  - conda install -y -c pytorch pytorch==1.2.0 torchvision==0.4.0 cudatoolkit=10.0
+  - conda install -y numpy lmdb pyyaml matplotlib seaborn pickle5
+  - pip install opencv-python
+
+  # - python -c "import torch; from torch.utils.cpp_extension import CUDA_HOME; print(torch.cuda.is_available(), CUDA_HOME)"
+
+build_script:
+  - ps: Push-Location $env:BUILD_DIR
+  - git clone https://github.com/CharlesShang/DCNv2.git
+
+  - ps: Push-Location DCNv2
+  - sed -i 's/torch\.cuda\.is_available()/True/' setup.py
+  - python setup.py build develop
+  - ps: Pop-Location
+
+  - ps: Pop-Location
+
+after_build:
+  - 7z a DCNv2.7z %BUILD_DIR%\DCNv2
+  # - 7z a %NAME%.7z %MINICONDA%\envs\%NAME%
+
+test: off
+artifacts:
+- path: DCNv2.7z
+# - path: '%NAME%.7z'
