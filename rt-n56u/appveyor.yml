@@ -4,22 +4,34 @@ image: Ubuntu1604
 
 environment:
   BUILD_OUTPUT: /tmp/log
+  NAME: #
+  EMAIL: #
   matrix:
     - PRODUCT_ID: 360WIFI-P2
     - PRODUCT_ID: PSG1218
+
+init:
+  # - export ARTIFACT=${PRODUCT_ID}_$(date +%y-%m-%d)_$(date +%H-%M)
+  - export ARTIFACT=${PRODUCT_ID}_$(date +%F)_$(date +%H-%M) # %Y-%m-%d %H-%M
 
 install:
   - sudo apt-get update
   - sudo apt-get install -y autoconf automake autopoint bison build-essential flex gawk gettext git gperf libtool pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev texinfo python-docutils
 
 before_build:
+  - git config --global user.name "$NAME"
+  - git config --global user.email "$EMAIL"
+
   - cd /opt
-  - sudo git clone https://github.com/andy-padavan/rt-n56u.git
+  - sudo git clone https://github.com/seven1oe/rt-n56u4p.git rt-n56u
 
   - cd rt-n56u
-  - sudo git remote add mod https://github.com/seven1oe/rt-n56u4p.git
-  - sudo git fetch mod
-  - sudo git merge mod/master --no-edit --quiet
+  - sudo git remote add main https://github.com/andy-padavan/rt-n56u.git
+  - sudo git fetch main
+  - sudo git rebase main/master
+
+  - sudo git --no-pager tag -n
+  - sudo git --no-pager log --format=fuller main/master~1..HEAD
 
 build_script:
   - cd /opt/rt-n56u/toolchain-mipsel
@@ -39,4 +51,4 @@ after_build:
 test: off
 artifacts:
 - path: images
-  name: padavan
+  name: $ARTIFACT
