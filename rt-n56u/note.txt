@@ -1,6 +1,0 @@
-echo "CONFIG_MT76X2_AP_INTERNAL_PA_INTERNAL_LNA=n" | sudo tee -a configs/boards/360WIFI-P2/kernel-3.4.x.config >/dev/null 2>&1
-echo "CONFIG_MT76X2_AP_INTERNAL_PA_EXTERNAL_LNA=n" | sudo tee -a configs/boards/360WIFI-P2/kernel-3.4.x.config >/dev/null 2>&1
-
-sudo bash -c "echo "CONFIG_MT76X2_AP_INTERNAL_PA_INTERNAL_LNA=n" >> configs/boards/360WIFI-P2/kernel-3.4.x.config"
-sudo bash -c "echo "CONFIG_MT76X2_AP_INTERNAL_PA_EXTERNAL_LNA=n" >> configs/boards/360WIFI-P2/kernel-3.4.x.config"
-

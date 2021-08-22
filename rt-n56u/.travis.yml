@@ -28,18 +28,26 @@ addons:
 env:
   global:
     - BUILD_OUTPUT=/tmp/log
+    - NAME= #
+    - EMAIL= #
   matrix:
     - PRODUCT_ID=360WIFI-P2
     - PRODUCT_ID=PSG1218
 
 before_install:
+  - git config --global user.name "$NAME"
+  - git config --global user.email "$EMAIL"
+
   - cd /opt
-  - sudo git clone https://github.com/andy-padavan/rt-n56u.git
+  - sudo git clone https://github.com/seven1oe/rt-n56u4p.git rt-n56u
 
   - cd rt-n56u
-  - sudo git remote add mod https://github.com/seven1oe/rt-n56u4p.git 
-  - sudo git fetch mod
-  - sudo git merge mod/master --no-edit --quiet
+  - sudo git remote add main https://github.com/andy-padavan/rt-n56u.git
+  - sudo git fetch main
+  - sudo git rebase main/master
+
+  - sudo git --no-pager tag -n
+  - sudo git --no-pager log --format=fuller main/master~1..HEAD
 
 install:
   - |
@@ -55,6 +63,14 @@ install:
 script:
   - cd /opt/rt-n56u/trunk
   - if [ $PRODUCT_ID = "PSG1218" ]; then sudo cp configs/templates/psg1218_base.config .config; fi
+  # ! already write into file, no longer need to do this !
+  # configure AP mode method [1]:
+  # - echo "CONFIG_MT76X2_AP_INTERNAL_PA_INTERNAL_LNA=n" | sudo tee -a configs/boards/360WIFI-P2/kernel-3.4.x.config >/dev/null 2>&1
+  # - echo "CONFIG_MT76X2_AP_INTERNAL_PA_EXTERNAL_LNA=n" | sudo tee -a configs/boards/360WIFI-P2/kernel-3.4.x.config >/dev/null 2>&1
+  # configure AP mode method [2]:
+  # - sudo bash -c "echo "CONFIG_MT76X2_AP_INTERNAL_PA_INTERNAL_LNA=n" >> configs/boards/360WIFI-P2/kernel-3.4.x.config"
+  # - sudo bash -c "echo "CONFIG_MT76X2_AP_INTERNAL_PA_EXTERNAL_LNA=n" >> configs/boards/360WIFI-P2/kernel-3.4.x.config"
+
   - sudo ./clear_tree
   - sudo ./build_firmware >$BUILD_OUTPUT 2>&1
   - sudo tar cf images_$PRODUCT_ID.tar images
@@ -65,17 +81,3 @@ after_success:
 after_script:
   # - kill %1
   - tail -500 $BUILD_OUTPUT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
