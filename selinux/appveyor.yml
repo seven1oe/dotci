@@ -1,0 +1,30 @@
+version: 1.0.{build}
+
+environment:
+  BASH: '"C:\Program Files\Git\usr\bin\bash.exe"'
+
+  NDK_VERSION: r22b
+  ABI_VERSION: 21
+  LIBSEPOL_VERSION: 3.2
+
+install:
+  - curl -fsSL https://dl.google.com/android/repository/android-ndk-%NDK_VERSION%-windows-x86_64.zip -o android-ndk-%NDK_VERSION%-windows-x86_64.zip
+  - unzip -q android-ndk-%NDK_VERSION%-windows-x86_64.zip
+  - set NDK_HOME=%CD%\android-ndk-%NDK_VERSION%
+  - set PATH=%NDK_HOME%\prebuilt\windows-x86_64\bin;%NDK_HOME%\toolchains\llvm\prebuilt\windows-x86_64\bin;%PATH%
+
+  - curl -fsSL https://github.com/SELinuxProject/selinux/releases/download/%LIBSEPOL_VERSION%/libsepol-%LIBSEPOL_VERSION%.tar.gz -o libsepol-%LIBSEPOL_VERSION%.tar.gz
+  - tar xzf libsepol-%LIBSEPOL_VERSION%.tar.gz
+
+  - set CC=aarch64-linux-android%ABI_VERSION%-clang.cmd
+  - set AR=aarch64-linux-android-ar.exe
+  - set RANLIB=aarch64-linux-android-ranlib.exe
+
+build_script:
+  - '%BASH% -lc "cd libsepol-%LIBSEPOL_VERSION% &&
+                 make DESTDIR=\"$(pwd)/build\" DISABLE_CIL=\"y\" install"'
+
+test: off
+artifacts:
+- path: libsepol-%LIBSEPOL_VERSION%\build
+  name: libsepol-%LIBSEPOL_VERSION%
