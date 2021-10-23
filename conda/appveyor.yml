@@ -1,5 +1,9 @@
 version: 1.0.{build}
 environment:
+  PYTHON: 3.8
+  # orange
+  NAME: orange
+
   PYTHON: 3.7
   # prophet
   NAME: prophet
@@ -64,6 +68,11 @@ build_script:
   
   # *** frida ***
   - pip install frida-tools
+
+  # *** orange ***
+  # - conda config --add channels conda-forge
+  - conda install -y -c conda-forge orange3
+  - pip install Orange3-Text
 
   - 7z a %ARTIFACT% %MINICONDA%\envs\%NAME%
 
