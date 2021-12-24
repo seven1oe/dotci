@@ -1,0 +1,49 @@
+version: 1.0.{build}
+
+environment:
+  GOPATH: C:\projects\go
+  MINGW64: C:\msys64\mingw64
+
+  PATH: '%GOPATH%\bin;%GOPATH%\lib;%PATH%;%MINGW64%\bin'
+  LIBRARY_PATH: '%GOPATH%\lib'
+
+  PROTO_VERSION: 3.19.1
+  TENSORFLOW_VERSION: 1.15.0
+  TENSORFLOW_GO_VERSION: 1.15.5
+
+# only tested on 1.15
+install:
+  - curl -fsSL -o libtensorflow-cpu-windows-x86_64.zip https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-windows-x86_64-%TENSORFLOW_VERSION%.zip
+  - unzip -q libtensorflow-cpu-windows-x86_64.zip -d %GOPATH%
+
+  - curl -fsSL -o protoc-win64.zip https://github.com/protocolbuffers/protobuf/releases/download/v%PROTO_VERSION%/protoc-%PROTO_VERSION%-win64.zip
+  - unzip -q protoc-win64.zip -d %GOPATH%
+
+  - curl -fsSL -o tensorflow.zip https://github.com/tensorflow/tensorflow/archive/refs/tags/v%TENSORFLOW_GO_VERSION%.zip
+  - mkdir %GOPATH%\src\github.com\tensorflow
+  - unzip -q tensorflow.zip -d %GOPATH%\src\github.com\tensorflow
+
+  - ps: Push-Location $env:GOPATH\src
+  - move github.com\tensorflow\tensorflow-%TENSORFLOW_GO_VERSION% github.com\tensorflow\tensorflow
+
+  - ps: Push-Location github.com\tensorflow\tensorflow\tensorflow\go
+  - sed -i "s#${GOPATH//:/ }#${GOPATH}#" genop\generate.sh
+
+  - ps: Push-Location op
+  - go generate
+
+  - ps: Pop-Location # github.com\tensorflow\tensorflow\tensorflow\go
+  - go get -d -v ./...
+
+  - ps: Pop-Location
+  - ps: Pop-Location
+
+build_script:
+  - go test github.com/tensorflow/tensorflow/tensorflow/go/...
+
+after_build:
+  - 7z a path.7z %GOPATH%
+
+test: off
+artifacts:
+- path: path.7z
