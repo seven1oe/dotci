@@ -13,6 +13,8 @@ environment:
   NAME: mar
   # frida
   NAME: frida
+  # tensorflow
+  NAME: tensorflow
 
   PYTHON: 2.7
   # pefile
@@ -22,6 +24,7 @@ environment:
   ARTIFACT: '%NAME%.7z'
 
 init:
+  # - subst "D:" %APPVEYOR_BUILD_FOLDER%\..
   - set PATH=C:\msys64\mingw64\bin;C:\msys64\usr\bin;%PATH%
 
 install:
@@ -65,7 +68,7 @@ build_script:
 
   # *** pefile ***
   - pip install pefile
-  
+
   # *** frida ***
   - pip install frida-tools
 
@@ -74,6 +77,15 @@ build_script:
   - conda install -y -c conda-forge orange3
   - pip install Orange3-Text
 
+  # *** tensorflow ***
+  - conda install numpy scipy pandas scikit-learn tensorflow-estimator=1.15.1 tensorflow=1.15.0 -y
+  # - conda install scikit-learn-intelex -y
+  - python -c "import tensorflow as tf;
+               import time;
+               import numpy as np;
+               import numpy as np;"
+
+after_build:
   - 7z a %ARTIFACT% %MINICONDA%\envs\%NAME%
 
 test: off
