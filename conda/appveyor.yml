@@ -3,6 +3,8 @@ environment:
   PYTHON: 3.8
   # orange
   NAME: orange
+  # pytorch
+  NAME: pytorch
 
   PYTHON: 3.7
   # prophet
@@ -84,6 +86,9 @@ build_script:
                import time;
                import numpy as np;
                import numpy as np;"
+
+  # *** pytorch ***
+  - conda install pytorch torchvision torchaudio cpuonly -c pytorch-lts -y
 
 after_build:
   - 7z a %ARTIFACT% %MINICONDA%\envs\%NAME%
