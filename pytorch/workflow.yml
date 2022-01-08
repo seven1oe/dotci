@@ -13,13 +13,14 @@ jobs:
       run:
         shell: cmd
     steps:
-    - uses: actions/checkout@v2
+    # - uses: actions/checkout@v2
 
     - shell: C:\msys64\usr\bin\bash.exe -l {0} # msys2_shell.cmd -defterm -no-start -mingw64 -here {0}
       run: |
-        pacman -Sy --noconfirm mingw-w64-x86_64-{gcc,make,cmake,python,python-pip,python-yaml}
+        pacman -Sy --noconfirm --needed mingw-w64-x86_64-{gcc,make,cmake}
+        pacman -Sy --noconfirm --needed mingw-w64-x86_64-{python,python-pip,python-yaml}
       #
-      # pacman -Sy --noconfirm mingw-w64-x86_64-{protobuf,eigen3,openmp} # openblas
+      # pacman -Sy --noconfirm mingw-w64-x86_64-{protobuf,eigen3} # openmp openblas
 
     - run: |
         git clone --recursive -b v%PYTORCH_VERSION% https://github.com/pytorch/pytorch.git
@@ -60,17 +61,21 @@ jobs:
     - working-directory: pytorch
       run: |
         sed -i 's@-O2@-O4 -msse2 -msse3 -msse4@' CMakeLists.txt
+        
+        sed -i 's@INTERN_BUILD_MOBILE AND INTERN_USE_EIGEN_BLAS@INTERN_USE_EIGEN_BLAS@' cmake\Dependencies.cmake
+        
+        sed -i 's@NOT INTERN_BUILD_MOBILE OR NOT INTERN_USE_EIGEN_BLAS@NOT INTERN_USE_EIGEN_BLAS@' cmake\External\EigenBLAS.cmake
+        sed -i 's@add_library(eigen_blas@add_library(eigen_blas STATIC@' cmake\External\EigenBLAS.cmake
 
     - working-directory: pytorch
       run: |
         mkdir build
-        mkdir third_party\eigen\build
 
     - working-directory: pytorch\build
       shell: C:\msys64\usr\bin\bash.exe -l {0}
       run: |
         cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/libtorch" -DPYTHON_EXECUTABLE=$(which python) \
-                                      -DUSE_OPENMP=OFF \
+                                      -DINTERN_USE_EIGEN_BLAS=ON \
                                       -DBUILD_PYTHON=OFF \
                                       -DBUILD_CAFFE2_OPS=OFF \
                                       -DUSE_CUDA=OFF \
@@ -87,11 +92,15 @@ jobs:
       #                               -DUSE_SYSTEM_EIGEN_INSTALL=ON \
       #                               -DBUILD_CUSTOM_PROTOBUF=OFF \
 
-    - working-directory: pytorch\third_party\eigen\build
-      shell: C:\msys64\usr\bin\bash.exe -l {0}
-      run: |
-        cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/libtorch"
-        mingw32-make install
+    # - working-directory: pytorch
+      # run: |
+        # mkdir third_party\eigen\build
+
+    # - working-directory: pytorch\third_party\eigen\build
+      # shell: C:\msys64\usr\bin\bash.exe -l {0}
+      # run: |
+        # cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/libtorch"
+        # mingw32-make install
 
     - uses: actions/upload-artifact@v2
       with:
