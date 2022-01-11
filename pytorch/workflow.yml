@@ -4,7 +4,7 @@ env:
   CHERE_INVOKING: 1
   MSYSTEM: MINGW64
 
-  PYTORCH_VERSION: 1.6.0
+  PYTORCH_VERSION: 1.8.2
 
 jobs:
   build:
@@ -18,54 +18,56 @@ jobs:
     - shell: C:\msys64\usr\bin\bash.exe -l {0} # msys2_shell.cmd -defterm -no-start -mingw64 -here {0}
       run: |
         pacman -Sy --noconfirm --needed mingw-w64-x86_64-{gcc,make,cmake}
-        pacman -Sy --noconfirm --needed mingw-w64-x86_64-{python,python-pip,python-yaml}
+        pacman -Sy --noconfirm --needed mingw-w64-x86_64-{python,python-pip,python-yaml,python-typing_extensions}
       #
-      # pacman -Sy --noconfirm mingw-w64-x86_64-{protobuf,eigen3} # openmp openblas
+      # pacman -Sy --noconfirm mingw-w64-x86_64-{protobuf,eigen3} # openblas
 
     - run: |
         git clone --recursive -b v%PYTORCH_VERSION% https://github.com/pytorch/pytorch.git
 
     - working-directory: pytorch
       run: |
-        sed -i 's@_MSC_VER@_WIN64@' c10\core\CPUAllocator.cpp
-        sed -i 's@CAFFE2_API@C10_API@' c10\core\GeneratorImpl.h
-        
-        sed -i 's@EXPORT_IF_NOT_GCC@C10_EXPORT@' c10\util\typeid.cpp
-        sed -i 's@__clang__@_WIN64@' c10\util\typeid.h
-        sed -i 's@CAFFE2_API@C10_EXPORT@' c10\util\UniqueVoidPtr.h
-        
-        sed -i 's@__declspec(dllimport)@@' c10\macros\Export.h
-        
-        sed -i 's@_MSC_VER@_WIN64@' torch\csrc\jit\codegen\fuser\cpu\temp_file.h
-        sed -i 's@_MSC_VER@_WIN64@' torch\csrc\jit\frontend\strtod.cpp
-        sed -i 's@C10_HIDDEN @@' torch\csrc\utils\throughput_benchmark.h
-        sed -i 's@_MSC_VER@_WIN64@' torch\csrc\Module.cpp
-        
-        sed -i 's@find_package(AVX)@@' cmake\Dependencies.cmake
-        
-        sed -i 's@_MSC_VER@_WIN64@' caffe2\distributed\file_store_handler.cc
-        
-        sed -i '$a set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")' caffe2\perfkernels\CMakeLists.txt
-
-    - working-directory: pytorch
-      run: |
         sed -i 's@__declspec(dllimport)@@' aten\src\TH\THGeneral.h.in
         sed -i 's@#define TH_API TH_CPP_API@#define TH_API TH_EXTERNC TH_CPP_API@' aten\src\TH\THGeneral.h.in
         
+        sed -i 's@_MSC_VER@_WIN64@' c10\core\CPUAllocator.cpp
+        sed -i 's@TORCH_API@C10_API@' c10\core\GeneratorImpl.h
+        sed -i 's@_MSC_VER@_WIN64@' c10\core\impl\LocalDispatchKeySet.h
+        sed -i 's@_MSC_VER@_WIN64@' c10\core\impl\LocalDispatchKeySet.cpp
+        
+        sed -i 's@EXPORT_IF_NOT_GCC@C10_EXPORT@' c10\util\typeid.cpp
+        sed -i 's@  EXPORT_IF_NOT_GCC@  C10_EXPORT@' c10\util\typeid.h
+        sed -i 's@TORCH_API@C10_EXPORT@' c10\util\UniqueVoidPtr.h
+        
+        sed -i 's@__declspec(dllimport)@@' c10\macros\Export.h
+        
+        sed -i 's@_MSC_VER@_WIN64@' caffe2\distributed\file_store_handler.cc
+        
         sed -i '/_aligned_malloc/i\#elif defined(_WIN64)' caffe2\utils\threadpool\WorkersPool.h
         sed -i '/_aligned_free/i\#elif defined(_WIN64)' caffe2\utils\threadpool\WorkersPool.h
+        
+        sed -i 's@_MSC_VER@_WIN64@' torch\csrc\jit\codegen\fuser\cpu\temp_file.h
+        sed -i 's@_MSC_VER@_WIN64@' torch\csrc\jit\frontend\strtod.cpp
+        sed -i 's@_MSC_VER@_WIN64@' torch\csrc\Module.cpp
+        
+        sed -i "s@!defined(__INTEL_COMPILER))@!defined(__INTEL_COMPILER) \&\& (__GNUC__ < 11))@" third_party\XNNPACK\src\xnnpack\intrinsics-polyfill.h
       #
       # sed -i -zE 's@\(_MSC_VER\)(\n.+?_aligned_malloc)@(_WIN64)\1@m' caffe2\utils\threadpool\WorkersPool.h
       # sed -i -zE 's@\(_MSC_VER\)(\n.+?_aligned_free)@(_WIN64)\1@m' caffe2\utils\threadpool\WorkersPool.h
 
     - working-directory: pytorch
       run: |
+        sed -i '$a set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")' caffe2\perfkernels\CMakeLists.txt
+        
+        sed -i '/find_package(AVX)/d' cmake\Dependencies.cmake
+
+    - working-directory: pytorch
+      run: |
         sed -i 's@-O2@-O4 -msse2 -msse3 -msse4@' CMakeLists.txt
         
-        sed -i 's@INTERN_BUILD_MOBILE AND INTERN_USE_EIGEN_BLAS@INTERN_USE_EIGEN_BLAS@' cmake\Dependencies.cmake
+        sed -i 's@elseif(INTERN_USE_EIGEN_BLAS)@endif()\nif(INTERN_USE_EIGEN_BLAS)@' cmake\Dependencies.cmake
         
         sed -i 's@NOT INTERN_BUILD_MOBILE OR NOT INTERN_USE_EIGEN_BLAS@NOT INTERN_USE_EIGEN_BLAS@' cmake\External\EigenBLAS.cmake
-        sed -i 's@add_library(eigen_blas@add_library(eigen_blas STATIC@' cmake\External\EigenBLAS.cmake
 
     - working-directory: pytorch
       run: |
@@ -77,7 +79,7 @@ jobs:
         cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/libtorch" -DPYTHON_EXECUTABLE=$(which python) \
                                       -DINTERN_USE_EIGEN_BLAS=ON \
                                       -DBUILD_PYTHON=OFF \
-                                      -DBUILD_CAFFE2_OPS=OFF \
+                                      -DBUILD_CAFFE2=OFF \
                                       -DUSE_CUDA=OFF \
                                       -DUSE_NUMPY=OFF \
                                       -DUSE_FBGEMM=OFF \
@@ -88,19 +90,8 @@ jobs:
         mingw32-make -j $(nproc)
         mingw32-make install
       #
-      #                               -DUSE_OPENMP=ON \
       #                               -DUSE_SYSTEM_EIGEN_INSTALL=ON \
       #                               -DBUILD_CUSTOM_PROTOBUF=OFF \
-
-    # - working-directory: pytorch
-      # run: |
-        # mkdir third_party\eigen\build
-
-    # - working-directory: pytorch\third_party\eigen\build
-      # shell: C:\msys64\usr\bin\bash.exe -l {0}
-      # run: |
-        # cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/libtorch"
-        # mingw32-make install
 
     - uses: actions/upload-artifact@v2
       with:
