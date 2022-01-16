@@ -4,7 +4,7 @@ env:
   CHERE_INVOKING: 1
   MSYSTEM: MINGW64
 
-  PYTORCH_VERSION: 1.8.2
+  PYTORCH_VERSION: 1.9.1
 
 jobs:
   build:
@@ -34,6 +34,8 @@ jobs:
         sed -i 's@TORCH_API@C10_API@' c10\core\GeneratorImpl.h
         sed -i 's@_MSC_VER@_WIN64@' c10\core\impl\LocalDispatchKeySet.h
         sed -i 's@_MSC_VER@_WIN64@' c10\core\impl\LocalDispatchKeySet.cpp
+        sed -i 's@TORCH_API@C10_API@' c10\core\GradMode.h
+        sed -i 's@TORCH_API@C10_API@' c10\core\InferenceMode.h
         
         sed -i 's@EXPORT_IF_NOT_GCC@C10_EXPORT@' c10\util\typeid.cpp
         sed -i 's@  EXPORT_IF_NOT_GCC@  C10_EXPORT@' c10\util\typeid.h
@@ -60,6 +62,8 @@ jobs:
         sed -i '$a set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")' caffe2\perfkernels\CMakeLists.txt
         
         sed -i '/find_package(AVX)/d' cmake\Dependencies.cmake
+        
+        sed -i '/add_subdirectory(quantized)/i\list(REVERSE native_ao_sparse_cpp)\n' aten\src\ATen\CMakeLists.txt
 
     - working-directory: pytorch
       run: |
@@ -68,6 +72,12 @@ jobs:
         sed -i 's@elseif(INTERN_USE_EIGEN_BLAS)@endif()\nif(INTERN_USE_EIGEN_BLAS)@' cmake\Dependencies.cmake
         
         sed -i 's@NOT INTERN_BUILD_MOBILE OR NOT INTERN_USE_EIGEN_BLAS@NOT INTERN_USE_EIGEN_BLAS@' cmake\External\EigenBLAS.cmake
+        
+        sed -i '/-mavx2/d' cmake\MiscCheck.cmake
+        sed -i '/-mavx512f -mavx512dq -mavx512vl/d' cmake\MiscCheck.cmake
+      #
+      # sed -i '/-mavx2/s@^ @#@' cmake\MiscCheck.cmake
+      # sed -i '/-mavx512f -mavx512dq -mavx512vl/s@^ @#@' cmake\MiscCheck.cmake
 
     - working-directory: pytorch
       run: |
@@ -77,6 +87,7 @@ jobs:
       shell: C:\msys64\usr\bin\bash.exe -l {0}
       run: |
         cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/libtorch" -DPYTHON_EXECUTABLE=$(which python) \
+                                      -DUSE_KINETO=OFF \
                                       -DINTERN_USE_EIGEN_BLAS=ON \
                                       -DBUILD_PYTHON=OFF \
                                       -DBUILD_CAFFE2=OFF \
