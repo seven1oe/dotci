@@ -4,7 +4,7 @@ env:
   CHERE_INVOKING: 1
   MSYSTEM: MINGW64
 
-  PYTORCH_VERSION: 1.9.1
+  PYTORCH_VERSION: 1.10.1
 
 jobs:
   build:
@@ -53,9 +53,12 @@ jobs:
         sed -i 's@_MSC_VER@_WIN64@' torch\csrc\Module.cpp
         
         sed -i "s@!defined(__INTEL_COMPILER))@!defined(__INTEL_COMPILER) \&\& (__GNUC__ < 11))@" third_party\XNNPACK\src\xnnpack\intrinsics-polyfill.h
+        
+        sed -i 's@direct\.h@sys/stat.h@' third_party\onnx\onnx\checker.cc
       #
       # sed -i -zE 's@\(_MSC_VER\)(\n.+?_aligned_malloc)@(_WIN64)\1@m' caffe2\utils\threadpool\WorkersPool.h
       # sed -i -zE 's@\(_MSC_VER\)(\n.+?_aligned_free)@(_WIN64)\1@m' caffe2\utils\threadpool\WorkersPool.h
+      # sed -i 's@__declspec(dllexport)@__attribute__((__visibility__("default")))@' c10\macros\Export.h
 
     - working-directory: pytorch
       run: |
@@ -64,16 +67,18 @@ jobs:
         sed -i '/find_package(AVX)/d' cmake\Dependencies.cmake
         
         sed -i '/add_subdirectory(quantized)/i\list(REVERSE native_ao_sparse_cpp)\n' aten\src\ATen\CMakeLists.txt
+        
+        sed -i 's@ -Werror=format@ -Werror=format -Wno-error=nonnull@' CMakeLists.txt
 
     - working-directory: pytorch
       run: |
-        sed -i 's@-O2@-O4 -msse2 -msse3 -msse4@' CMakeLists.txt
+        sed -i 's@-O2@-O4 -msse2 -msse3 -msse4 -fno-keep-inline-dllexport@' CMakeLists.txt
         
         sed -i 's@elseif(INTERN_USE_EIGEN_BLAS)@endif()\nif(INTERN_USE_EIGEN_BLAS)@' cmake\Dependencies.cmake
         
         sed -i 's@NOT INTERN_BUILD_MOBILE OR NOT INTERN_USE_EIGEN_BLAS@NOT INTERN_USE_EIGEN_BLAS@' cmake\External\EigenBLAS.cmake
         
-        sed -i '/-mavx2/d' cmake\MiscCheck.cmake
+        sed -i '/find_package(AVX)/d' cmake\MiscCheck.cmake
         sed -i '/-mavx512f -mavx512dq -mavx512vl/d' cmake\MiscCheck.cmake
       #
       # sed -i '/-mavx2/s@^ @#@' cmake\MiscCheck.cmake
@@ -87,6 +92,7 @@ jobs:
       shell: C:\msys64\usr\bin\bash.exe -l {0}
       run: |
         cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/libtorch" -DPYTHON_EXECUTABLE=$(which python) \
+                                      -DUSE_BREAKPAD=OFF \
                                       -DUSE_KINETO=OFF \
                                       -DINTERN_USE_EIGEN_BLAS=ON \
                                       -DBUILD_PYTHON=OFF \
@@ -101,8 +107,8 @@ jobs:
         mingw32-make -j $(nproc)
         mingw32-make install
       #
-      #                               -DUSE_SYSTEM_EIGEN_INSTALL=ON \
       #                               -DBUILD_CUSTOM_PROTOBUF=OFF \
+      #                               -DUSE_SYSTEM_EIGEN_INSTALL=ON \
 
     - uses: actions/upload-artifact@v2
       with:
