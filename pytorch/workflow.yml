@@ -74,33 +74,28 @@ jobs:
         
         sed -i "s@!defined(__INTEL_COMPILER))@!defined(__INTEL_COMPILER) \&\& (__GNUC__ < 11))@" third_party\XNNPACK\src\xnnpack\intrinsics-polyfill.h
         
-        sed -i 's@direct\.h@sys/stat.h@' third_party\onnx\onnx\checker.cc
+        sed -i 's@_WIN32@_MSC_VER@' third_party\onnx\onnx\checker.cc
       #
       # sed -i -zE 's@\(_MSC_VER\)(\n.+?_aligned_malloc)@(_WIN64)\1@m' caffe2\utils\threadpool\WorkersPool.h
       # sed -i -zE 's@\(_MSC_VER\)(\n.+?_aligned_free)@(_WIN64)\1@m' caffe2\utils\threadpool\WorkersPool.h
       # sed -i 's@__declspec(dllexport)@__attribute__((__visibility__("default")))@' c10\macros\Export.h
+      # sed -i 's@__declspec(dllimport)@@' third_party\sleef\src\libm\sleeflibm_header.h.org.in
 
     - working-directory: pytorch
       run: |
-        sed -i '$a set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")' caffe2\perfkernels\CMakeLists.txt
-        
-        sed -i '/find_package(AVX)/d' cmake\Dependencies.cmake
+        sed -i '$a\set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")' caffe2\perfkernels\CMakeLists.txt
         
         sed -i '/add_subdirectory(quantized)/i\list(REVERSE native_ao_sparse_cpp)\n' aten\src\ATen\CMakeLists.txt
         
         sed -i 's@ -Werror=format@ -Werror=format -Wno-error=nonnull@' CMakeLists.txt
+        
+        sed -i 's@-fPIC@-fPIC -fno-keep-inline-dllexport -DSLEEF_STATIC_LIBS@' CMakeLists.txt
 
     - working-directory: pytorch
       run: |
-        sed -i 's@-O2@-O4 -msse2 -msse3 -msse4 -fno-keep-inline-dllexport@' CMakeLists.txt
-        
-        sed -i '/find_package(AVX)/d' cmake\MiscCheck.cmake
-        sed -i '/-mavx512f -mavx512dq -mavx512vl/d' cmake\MiscCheck.cmake
+        sed -i 's@-O2@-O4 -msse2 -msse3 -msse4@' CMakeLists.txt
         
         sed -i 's@  "blis")@  "blis;gomp")@' cmake\Modules\FindBLAS.cmake
-      #
-      # sed -i '/-mavx2/s@^ @#@' cmake\MiscCheck.cmake
-      # sed -i '/-mavx512f -mavx512dq -mavx512vl/s@^ @#@' cmake\MiscCheck.cmake
 
     - working-directory: pytorch
       run: |
