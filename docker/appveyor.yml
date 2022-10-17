@@ -1,0 +1,62 @@
+version: 1.0.{build}
+
+image: Ubuntu2004
+
+environment:
+  DOCKER_IMAGE: nginx
+  DOCKER_TAG: mainline-alpine
+
+  GUEST_ID: 80
+
+install:
+  - sudo apt install -y jq
+
+before_build:
+  - docker pull "$DOCKER_IMAGE:$DOCKER_TAG"
+  - docker save "$DOCKER_IMAGE:$DOCKER_TAG" -o ${DOCKER_IMAGE##*/}.$DOCKER_TAG.tar
+  - export DOCKER_IMAGE=${DOCKER_IMAGE##*/}
+
+build_script:
+  - |-
+    mkdir -p sbin && cat > sbin/openrc << EOF
+    #!/bin/sh
+    case "\$1" in
+        default)
+            ip link set eth0 up
+            ip addr add 10.0.0.$GUEST_ID/24 dev eth0
+            ip route add default via 10.0.0.1 dev eth0
+            nginx
+            ;;
+    esac
+    EOF
+  - chmod a+rwx sbin/openrc
+  - tar -rf append.tar --numeric-owner sbin/openrc
+
+  - |-
+    mkdir -p etc/nginx/conf.d && cat > etc/nginx/conf.d/default.conf << EOF
+    autoindex on;
+    autoindex_exact_size on;
+    autoindex_localtime on;
+    charset utf-8;
+
+    server {
+        listen 80 default_server;
+        server_name _;
+        root /root/www;
+
+        location / {
+            auth_basic "Restricted";
+            auth_basic_user_file /etc/nginx/htpasswd;
+        }
+    }
+    EOF
+  - chmod u+rw,g+r,o+r etc/nginx/conf.d/default.conf
+  - tar -rf append.tar --numeric-owner etc/nginx/conf.d/default.conf
+
+after_build:
+  - tar -xf $DOCKER_IMAGE.$DOCKER_TAG.tar
+  - tar -Af $DOCKER_IMAGE.tar $(jq -r .[0].Layers[] manifest.json) append.tar
+
+test: off
+artifacts:
+- path: $DOCKER_IMAGE.tar
