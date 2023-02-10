@@ -1,0 +1,32 @@
+version: 1.0.{build}
+
+image: Ubuntu2004
+
+install:
+  - sudo apt update
+  - sudo apt install -y gcc-aarch64-linux-gnu # TODO: android toolchain
+
+  - wget -O kernel.tar.gz "https://download-c1.huawei.com/download/downloadCenter?downloadId=98260&version=413949&siteCode=worldwide"
+  - tar xzf kernel.tar.gz
+
+  - pushd Code_Opensource/kernel
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- merge_hi3660_defconfig modules_prepare
+  - popd
+
+before_build:
+  - git clone https://github.com/504ensicsLabs/LiME.git
+
+  - |-
+    cat > LiME/src/Makefile << EOF
+    obj-m := lime.o
+    lime-objs := tcp.o disk.o main.o hash.o deflate.o
+    EOF
+
+build_script:
+  - pushd Code_Opensource/kernel
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=$APPVEYOR_BUILD_FOLDER/LiME/src
+  - popd
+
+test: off
+artifacts:
+- path: LiME/src/lime.ko
