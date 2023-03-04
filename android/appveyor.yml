@@ -1,0 +1,47 @@
+version: 1.0.{build}
+
+image: Ubuntu2004
+
+environment:
+  NDK_VERSION: r25c
+  API_LEVEL: 23
+
+  BSDTAR_VERSION: 3.6.2
+  # TAR_VERSION: 1.34
+
+install:
+  - curl -fsSL https://dl.google.com/android/repository/android-ndk-$NDK_VERSION-linux.zip -o android-ndk.zip
+  - unzip -q android-ndk.zip
+
+  - export NDK_HOME=$(pwd)/android-ndk-$NDK_VERSION
+  - export PATH=$NDK_HOME/prebuilt/linux-x86_64/bin:$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+
+  - export CC=aarch64-linux-android$API_LEVEL-clang
+  - export AR=llvm-ar
+  - export RANLIB=llvm-ranlib
+
+before_build:
+  - curl -fsSL https://github.com/libarchive/libarchive/releases/download/v$BSDTAR_VERSION/libarchive-$BSDTAR_VERSION.tar.gz -o bsdtar.tar.gz
+  - tar xzf bsdtar.tar.gz
+
+  # - curl -fsSL https://mirrors.kernel.org/gnu/tar/tar-$TAR_VERSION.tar.gz -o tar.tar.gz
+  # - tar xzf tar.tar.gz
+
+build_script:
+  # bsdtar
+  - pushd libarchive-$BSDTAR_VERSION
+  - ./configure CFLAGS="-Icontrib/android/include" --host=aarch64-linux-android
+                                                   --prefix=$APPVEYOR_BUILD_FOLDER/build
+                                                   --without-xml2
+  - make install
+  - popd
+
+  # tar
+  # - pushd tar-$TAR_VERSION
+  # - ./configure CPPFLAGS="-D__USE_FORTIFY_LEVEL=0" --host=aarch64-linux-android
+  # - make
+  # - popd
+
+test: off
+artifacts:
+- path: build
