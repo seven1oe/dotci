@@ -1,0 +1,30 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+
+environment:
+  CHERE_INVOKING: 1
+
+  CYG_ROOT: C:\cygwin64
+  CYG_BASH: C:\cygwin64\bin\bash
+
+  VERSION: 1.11.1
+
+install:
+  - '%CYG_ROOT%\setup-x86_64.exe -gnq -P autoconf,autogen,automake,gcc-core,gcc-g++,make'
+
+before_build:
+  - '%CYG_BASH% -lc "wget -q -O - https://github.com/tinyproxy/tinyproxy/releases/download/$VERSION/tinyproxy-$VERSION.tar.gz | tar xzf -"'
+
+build_script:
+  - cd tinyproxy-%VERSION%
+  - '%CYG_BASH% -lc "./configure"'
+  - '%CYG_BASH% -lc "make install"'
+
+after_build:
+  - xcopy /S %CYG_ROOT%\usr\local %APPVEYOR_BUILD_FOLDER%\build\
+  - xcopy %CYG_ROOT%\bin\cygwin1.dll %APPVEYOR_BUILD_FOLDER%\build\bin\
+
+test: off
+artifacts:
+- path: build
+  name: tinyproxy
