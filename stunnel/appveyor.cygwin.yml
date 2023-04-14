@@ -1,0 +1,41 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+
+environment:
+  CHERE_INVOKING: 1
+
+  ROOT: '%APPVEYOR_BUILD_FOLDER%\cygwin64'
+  BASH: '%ROOT%\bin\bash -lc'
+
+  OPENSSL_VERSION: 1.1.1t
+  STUNNEL_VERSION: 5.69
+
+install:
+  - curl -fsSL https://cygwin.com/setup-x86_64.exe -o setup-x86_64.exe # fail silent show-error location
+  - setup-x86_64.exe -q -R %ROOT% -l %ROOT%\cache -P autoconf,autogen,automake,gcc-core,gcc-g++,make,wget
+
+before_build:
+  - '%BASH% "env"'
+  - '%BASH% "wget -q -O - https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz | tar xzf -"'
+  - '%BASH% "wget -q -O - https://www.stunnel.org/downloads/stunnel-$STUNNEL_VERSION.tar.gz | tar xzf -"'
+
+build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%\openssl-%OPENSSL_VERSION%
+  - '%BASH% "./Configure Cygwin-x86_64"'
+  - '%BASH% "make install_sw"'
+  - '%BASH% "cp ms/applink.c /usr/local/include/openssl/"' # !
+
+  - cd %APPVEYOR_BUILD_FOLDER%\stunnel-%STUNNEL_VERSION%
+  - '%BASH% "./configure --enable-static --disable-shared"'
+  - cd src
+  - '%BASH% "sed -i ""s#-lssl -lcrypto#/usr/local/lib/libssl.a /usr/local/lib/libcrypto.a#g"" Makefile"'
+  - '%BASH% "make install"'
+
+after_build:
+  - xcopy /S %ROOT%\usr\local %APPVEYOR_BUILD_FOLDER%\build\
+  - xcopy %ROOT%\bin\cygwin1.dll %APPVEYOR_BUILD_FOLDER%\build\bin\
+
+test: off
+artifacts:
+- path: build
+  name: stunnel
