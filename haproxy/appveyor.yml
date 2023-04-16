@@ -1,0 +1,50 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+
+environment:
+  ROOT: '%APPVEYOR_BUILD_FOLDER%\msys64'
+  BASH: '%ROOT%\msys2_shell.cmd -defterm -no-start -mingw64 -here -c'
+
+  LUA_VERSION: 5.4.4
+  HAPROXY_VERSION: 2.7.6
+
+install:
+  - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
+  - '%ROOT%\msys2_shell.cmd -defterm -no-start -c "env"'
+
+  - '%BASH% "pacman -Sy --noconfirm gcc binutils openssl-devel pcre-devel zlib-devel make diffutils"'
+
+before_build:
+  - '%BASH% "wget -q -O - https://www.lua.org/ftp/lua-$LUA_VERSION.tar.gz | tar xzf -"'
+  - ps: iex "$env:BASH 'wget -q -O - https://www.haproxy.org/download/`${HAPROXY_VERSION%.*}/src/haproxy-`$HAPROXY_VERSION.tar.gz | tar xzf -'" # ` = escape
+
+build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%\lua-%LUA_VERSION%
+  - '%BASH% "make mingw install"'
+
+  - cd %APPVEYOR_BUILD_FOLDER%\haproxy-%HAPROXY_VERSION%
+  - '%BASH% "sed -e ""s#-lssl -lcrypto#-static -lssl -lcrypto -lz#g""
+                 -e ""s#-Wl,\$(if \$(EXPORT_SYMBOL),\$(EXPORT_SYMBOL),--export-dynamic)##g""
+                 -i Makefile"'
+  - '%BASH% "make TARGET=cygwin
+                  USE_OPENSSL=1
+                  USE_PCRE=1
+                  USE_PCRE_JIT=1
+                  USE_THREAD=1
+                  USE_ZLIB=1
+                  USE_LUA=1
+                  LUA_LIB_NAME=lua
+                  LUA_LIB=/usr/local/lib
+                  LUA_INC=/usr/local/include
+                  ERR=1
+                  DEBUG=""-DDEBUG_STRICT -DDEBUG_MEMORY_POOLS -DDEBUG_POOL_INTEGRITY"" "'
+  - '%BASH% "make install-bin"'
+
+after_build:
+  - xcopy /S %ROOT%\usr\local\sbin %APPVEYOR_BUILD_FOLDER%\build\
+  - xcopy %ROOT%\usr\bin\msys-2.0.dll %APPVEYOR_BUILD_FOLDER%\build\
+
+test: off
+artifacts:
+- path: build
+  name: haproxy
