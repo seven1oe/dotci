@@ -5,20 +5,19 @@ environment:
   ROOT: '%APPVEYOR_BUILD_FOLDER%\msys64'
   BASH: '%ROOT%\msys2_shell.cmd -defterm -no-start -here -c'
 
+  OPENSSL_VERSION: 3.1.0 # TODO: test
+  STUNNEL_VERSION: 5.69
+
   matrix:
     - MSYSTEM: MINGW64
       PACKAGES: make mingw-w64-x86_64-{gcc,binutils,diffutils,openssl}
-      OPENSSL_VERSION: 3.1.0
-      STUNNEL_VERSION: 5.69
       PATCH_SCRIPT: s#-llibeay32 -lssleay32#-static -lssl -lcrypto -lws2_32 -lwsock32#g; s#\$(win32_prefix)windres#windres#g
       PATCH_TARGET: mingw.mk
       TARGET: mingw64
 
     - MSYSTEM: MSYS # cygwin
       PACKAGES: make gcc binutils diffutils openssl-devel
-      OPENSSL_VERSION: 1.1.1t
-      STUNNEL_VERSION: 5.69
-      PATCH_SCRIPT: s#-lssl -lcrypto#-static $MSYSTEM_PREFIX/lib/libssl.a $MSYSTEM_PREFIX/lib/libcrypto.a#g; s#-avoid-version#-avoid-version -no-undefined#g
+      PATCH_SCRIPT: s#-lssl -lcrypto#$MSYSTEM_PREFIX/lib/libssl.a $MSYSTEM_PREFIX/lib/libcrypto.a#g; s#-avoid-version#-avoid-version -no-undefined#g
       PATCH_TARGET: Makefile
       TARGET: install
 
@@ -36,7 +35,7 @@ build_script:
   - cd %APPVEYOR_BUILD_FOLDER%\openssl-%OPENSSL_VERSION%
   # - '%BASH% "./Configure --prefix=$MSYSTEM_PREFIX --libdir=lib"' # Cygwin-x86_64 mingw64 enable-capieng
   # - '%BASH% "make install_sw"'
-  - '%BASH% "cp ms/applink.c $MSYSTEM_PREFIX/include/openssl/"' # !
+  - if %MSYSTEM%==MINGW64 %BASH% "cp ms/applink.c $MSYSTEM_PREFIX/include/openssl/"
 
   - cd %APPVEYOR_BUILD_FOLDER%\stunnel-%STUNNEL_VERSION%
   - '%BASH% "./configure"'
@@ -46,11 +45,11 @@ build_script:
 
 after_build:
   - cd %APPVEYOR_BUILD_FOLDER%
-  # mingw64
-  - xcopy /S stunnel-%STUNNEL_VERSION%\bin build\ || exit 0
-  # cygwin
-  - xcopy %ROOT%\usr\bin\stunnel.exe build\ || exit 0
-  - xcopy %ROOT%\usr\bin\msys-2.0.dll build\ || exit 0
+
+  - if %MSYSTEM%==MINGW64 xcopy /S stunnel-%STUNNEL_VERSION%\bin build\
+
+  - if %MSYSTEM%==MSYS xcopy %ROOT%\usr\bin\stunnel.exe build\
+  - if %MSYSTEM%==MSYS xcopy %ROOT%\usr\bin\msys-2.0.dll build\
 
 test: off
 artifacts:
