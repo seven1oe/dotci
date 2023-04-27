@@ -1,0 +1,57 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+
+environment:
+  ROOT: '%APPVEYOR_BUILD_FOLDER%\msys64'
+  BASH: '%ROOT%\msys2_shell.cmd -defterm -no-start -here -c'
+
+  NGINX_VERSION: 1.23.4
+  NJS_VERSION: 0.7.12
+
+install:
+  - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
+
+  - '%BASH% "env"'
+  - '%BASH% "pacman -Sy --noconfirm make gcc binutils diffutils openssl-devel pcre2-devel zlib-devel libxslt-devel libcrypt-devel"'
+
+before_build:
+  - '%BASH% "wget -q -O - https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar -xzf -"'
+  - '%BASH% "wget -q -O - http://hg.nginx.org/njs/archive/$NJS_VERSION.tar.gz | tar -C nginx-$NGINX_VERSION -xzf -"'
+
+build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%\nginx-%NGINX_VERSION%
+  - '%BASH% "sed -i ""s#| MSYS_\*##g"" configure"'
+  - '%BASH% "./configure --with-debug --prefix= --with-cc-opt=""-DFD_SETSIZE=1024""
+                         --with-http_v2_module
+                         --with-http_realip_module
+                         --with-http_addition_module
+                         --with-http_sub_module
+                         --with-http_dav_module
+                         --with-http_stub_status_module
+                         --with-http_flv_module
+                         --with-http_mp4_module
+                         --with-http_gunzip_module
+                         --with-http_gzip_static_module
+                         --with-http_auth_request_module
+                         --with-http_random_index_module
+                         --with-http_secure_link_module
+                         --with-http_slice_module
+                         --with-mail
+                         --with-stream
+                         --with-http_ssl_module
+                         --with-mail_ssl_module
+                         --with-stream_ssl_module
+                         --add-module=njs-$NJS_VERSION/nginx"'
+  - '%BASH% "sed -e ""s#-pipe#-pipe -DPCRE2_STATIC -DLIBXML_STATIC#g""
+                 -e ""s#-lssl -lcrypto#-static -lssl -lcrypto#g""
+                 -e ""s#-lxml2#-lxml2 -lz -llzma -liconv#g""
+                 -i objs/Makefile"'
+  - '%BASH% "make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install"'
+
+after_build:
+  - xcopy %ROOT%\usr\bin\msys-2.0.dll %APPVEYOR_BUILD_FOLDER%\build\sbin
+
+test: off
+artifacts:
+- path: build
+  name: nginx-%NGINX_VERSION%
