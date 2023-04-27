@@ -1,0 +1,55 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+
+environment:
+  MSYSTEM: MINGW64
+  CHERE_INVOKING: 1
+
+  ROOT: '%APPVEYOR_BUILD_FOLDER%\msys64'
+  BASH: '%ROOT%\usr\bin\bash.exe -lc'
+
+  NGINX_VERSION: 1.23.4
+
+install:
+  - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
+
+  - '%BASH% "env"'
+  - '%BASH% "pacman -Sy --noconfirm make mingw-w64-x86_64-{gcc,binutils,diffutils,openssl,pcre2,zlib}"'
+
+before_build:
+  - '%BASH% "wget -q -O - https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar xzf -"'
+
+build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%\nginx-%NGINX_VERSION%
+  - '%BASH% "sed -i ""s#!= win32#!= NONE#g"" auto/lib/pcre/conf
+                                             auto/lib/zlib/conf
+                                             auto/lib/openssl/conf"'
+  - '%BASH% "./configure --with-debug --prefix= --with-cc-opt=\"-DFD_SETSIZE=1024\"
+                         --with-http_v2_module
+                         --with-http_realip_module
+                         --with-http_addition_module
+                         --with-http_sub_module
+                         --with-http_dav_module
+                         --with-http_stub_status_module
+                         --with-http_flv_module
+                         --with-http_mp4_module
+                         --with-http_gunzip_module
+                         --with-http_gzip_static_module
+                         --with-http_auth_request_module
+                         --with-http_random_index_module
+                         --with-http_secure_link_module
+                         --with-http_slice_module
+                         --with-mail
+                         --with-stream
+                         --with-http_ssl_module
+                         --with-mail_ssl_module
+                         --with-stream_ssl_module"'
+  - '%BASH% "sed -e ""s#-pipe#-pipe -DPCRE2_STATIC#g""
+                 -e ""s#-lssl -lcrypto#-static -lssl -lcrypto -lws2_32#g""
+                 -i objs/Makefile"'
+  - '%BASH% "make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install"'
+
+test: off
+artifacts:
+- path: build
+  name: nginx-%NGINX_VERSION%
