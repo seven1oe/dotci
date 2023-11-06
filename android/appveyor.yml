@@ -49,6 +49,7 @@ before_build:
 build_script:
   # bsdtar
   - pushd libarchive-$BSDTAR_VERSION
+  - sed -i "s/return \"\"/return \"UTF-8\"/g" libarchive/archive_string.c
   - ./configure CFLAGS="-Icontrib/android/include" --host=aarch64-linux-android
                                                    --prefix=$APPVEYOR_BUILD_FOLDER/build
                                                    --without-xml2
