@@ -1,0 +1,72 @@
+on: push
+
+env:
+  EXTRACT: extract
+  # 15=vs-2017
+  # 16=vs-2019
+  # 17=vs-2022
+  # https://docs.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-community?view=vs-2017
+  # https://docs.microsoft.com/en-us/visualstudio/install/workload-component-id-vs-build-tools?view=vs-2017
+  # https://docs.microsoft.com/en-us/visualstudio/install/command-line-parameter-examples?view=vs-2017
+  VERSION: 17
+  # vs_buildtools.exe
+  INSTALLER: vs_community.exe
+
+jobs:
+  build:
+    runs-on: windows-2019
+    defaults:
+      run:
+        shell: cmd
+    steps:
+    - run: |
+        echo %PATH%
+        echo %GITHUB_WORKSPACE%
+
+    - run: |
+        mkdir %EXTRACT%
+        
+        curl -fsSL -o winsdksetup.exe "https://go.microsoft.com/fwlink/?linkid=2261842"
+        curl -fsSL -o vs_bootstrapper.exe "https://aka.ms/vs/17/release/vs_community.exe"
+
+    # wix\dark -> BootstrapperApplicationData.xml
+    - run: |
+        winsdksetup.exe /quiet ^
+                        /layout winsdksetup ^
+                        /features OptionId.WindowsDesktopDebuggers
+        msiexec /qb ^
+                TARGETDIR="%GITHUB_WORKSPACE%\%EXTRACT%" ^
+                /a "winsdksetup\Installers\X64 Debuggers And Tools-x64_en-us.msi"
+        msiexec /qb ^
+                TARGETDIR="%GITHUB_WORKSPACE%\%EXTRACT%" ^
+                /a "winsdksetup\Installers\X86 Debuggers And Tools-x86_en-us.msi"
+
+    # https://aka.ms/vs/17/release/channel -> Microsoft.VisualStudio.Manifests.VisualStudio
+    # To use the FOR command in a batch program, specify %%variable instead of %variable.
+    - run: |
+        vs_bootstrapper.exe --wait --passive ^
+                            --layout vs_bootstrapper ^
+                            --add Microsoft.VisualStudio.Component.VC.CoreIde
+        for /d %%p in ("vs_bootstrapper\Microsoft.VisualStudio.VC.Ide.Dskx,version=*,productarch=neutral") do (
+            7z x -o%GITHUB_WORKSPACE%\%EXTRACT% "%%p\payload.vsix"
+        )
+
+    - run: |
+        mkdir usbview\x64
+        mkdir usbview\x86
+        copy "%EXTRACT%\Windows Kits\10\Debuggers\x64\usbview.exe" usbview\x64
+        copy "%EXTRACT%\Windows Kits\10\Debuggers\x86\usbview.exe" usbview\x86
+
+    - run: |
+        mkdir spyxx
+        copy "%EXTRACT%\Contents\Common7\Tools" spyxx
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: usbview
+        path: usbview
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: spyxx
+        path: spyxx
