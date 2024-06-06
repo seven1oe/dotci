@@ -1,5 +1,10 @@
 version: 1.0.{build}
+
 environment:
+  PYTHON: 3.10
+  # storytoolkitai
+  NAME: storytoolkitai
+
   PYTHON: 3.8
   # orange
   NAME: orange
@@ -23,7 +28,6 @@ environment:
   NAME: pefile
 
   MINICONDA: C:\Environment\miniconda3
-  ARTIFACT: '%NAME%.7z'
 
 init:
   # - subst "D:" %APPVEYOR_BUILD_FOLDER%\..
@@ -90,9 +94,13 @@ build_script:
   # *** pytorch ***
   - conda install pytorch torchvision torchaudio cpuonly -c pytorch-lts -y
 
+  # *** storytoolkitai ***
+  - git clone https://github.com/octimot/StoryToolkitAI.git
+  - pip install -r StoryToolkitAI\requirements.txt
+
 after_build:
-  - 7z a %ARTIFACT% %MINICONDA%\envs\%NAME%
+  - 7z a %NAME%.7z %MINICONDA%\envs\%NAME%
 
 test: off
 artifacts:
-- path: '%ARTIFACT%'
+- path: '%NAME%.7z'
