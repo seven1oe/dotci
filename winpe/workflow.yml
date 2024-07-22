@@ -1,0 +1,34 @@
+on: push
+
+env:
+  ARCH: x86
+
+jobs:
+  build:
+    runs-on: windows-2019
+    defaults:
+      run:
+        shell: cmd
+    steps:
+    - run: |
+        echo %PATH%
+        echo %GITHUB_WORKSPACE%
+
+    # ADK for Windows 10, version 1809
+    - run: |
+        curl -fsSL -o adksetup.exe "https://go.microsoft.com/fwlink/?linkid=2026036"
+        curl -fsSL -o adkwinpesetup.exe "https://go.microsoft.com/fwlink/?linkid=2022233"
+
+    - run: |
+        adksetup.exe /quiet /features OptionId.DeploymentTools
+        adkwinpesetup.exe /quiet
+
+    - run: |
+        call "C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\DandISetEnv.bat"
+        call copype %ARCH% %GITHUB_WORKSPACE%\WinPE_%ARCH%
+        call MakeWinPEMedia /ISO %GITHUB_WORKSPACE%\WinPE_%ARCH% %GITHUB_WORKSPACE%\WinPE_%ARCH%\WinPE_%ARCH%.iso
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: WinPE_${{env.ARCH}}
+        path: WinPE_${{env.ARCH}}\WinPE_${{env.ARCH}}.iso
