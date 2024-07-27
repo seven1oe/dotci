@@ -1,0 +1,31 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+
+install:
+  - curl -fsSL "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive" -o VSCode-win32-x64.zip
+  - 7z x -oVSCode-win32-x64 VSCode-win32-x64.zip
+
+before_build:
+  - VSCode-win32-x64\bin\code.cmd --install-extension ms-dotnettools.csharp
+  - VSCode-win32-x64\bin\code.cmd --install-extension MS-CEINTL.vscode-language-pack-zh-hans
+
+build_script:
+  - mkdir resources\app\extensions
+  # (1)
+  # - del %USERPROFILE%\.vscode\extensions\extensions.json
+  # - xcopy /S /E %USERPROFILE%\.vscode\extensions resources\app\extensions\
+  # (2)
+  - for %%p in (%APPDATA%\Code\CachedExtensionVSIXs\*) do (
+        7z x %%p extension extension.vsixmanifest &&
+        move extension resources\app\extensions\%%~nxp &&
+        move extension.vsixmanifest resources\app\extensions\%%~nxp\.vsixmanifest
+    )
+
+after_build:
+  - dir %USERPROFILE%\.vscode\extensions
+  - dir %APPDATA%\Code\CachedExtensionVSIXs
+  - 7z a VSCode-win32-x64.zip resources\app\extensions\
+
+test: off
+artifacts:
+- path: VSCode-win32-x64.zip
