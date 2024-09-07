@@ -1,4 +1,4 @@
-KDIR  := $APPVEYOR_BUILD_FOLDER/linux-4.1.25
+KDIR  := /home/appveyor/projects/dotci/linux-4.1.25
 PWD   := $(shell pwd)
 obj-m := mymodule.o
 
