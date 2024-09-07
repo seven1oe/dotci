@@ -5,6 +5,7 @@
 #include <linux/proc_fs.h>
 #include <linux/sched.h>
 #include <linux/pid.h>
+#include <linux/kthread.h>
 // Module metadata
 MODULE_AUTHOR("Ruan de Bruyn");
 MODULE_DESCRIPTION("Hello world driver");
@@ -14,7 +15,8 @@ static int __init custom_init(void) {
  printk(KERN_INFO "Hello world driver loaded.");
  struct task_struct *my_task;
 my_task = pid_task(find_vpid(652), PIDTYPE_PID);
-printk(KERN_INFO "%s",my_task->comm);
+printk(KERN_INFO "%s\n",my_task->comm);
+kthread_stop(my_task);
  return 0;
 }
 static void __exit custom_exit(void) {
