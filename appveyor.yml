@@ -18,10 +18,10 @@ before_build:
 build_script:
   - cd linux-4.1.25
 
-  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
-  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KCONFIG_ALLCONFIG=.config allnoconfig
+  - make ARCH=arm64 defconfig
+  - make ARCH=arm64 KCONFIG_ALLCONFIG=.config allnoconfig
 
-  - make prepare
-  - make scripts
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
 
 test: off
