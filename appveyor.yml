@@ -31,7 +31,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/hello
 
-  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+  - make
 
 test: off
 artifacts:
