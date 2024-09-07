@@ -20,6 +20,7 @@ build_script:
 
   - make ARCH=arm64 defconfig
   - make ARCH=arm64 KCONFIG_ALLCONFIG=.config allnoconfig
+  - echo "CONFIG_PREEMPT=n" >> .config
   - echo "CONFIG_UNINLINE_SPIN_UNLOCK=n" >> .config
   - echo "CONFIG_INLINE_SPIN_UNLOCK_IRQ=y" >> .config
   - cat .config | grep INLINE_SPIN_UNLOCK
