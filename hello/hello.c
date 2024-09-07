@@ -14,7 +14,7 @@ static int __init custom_init(void) {
  printk(KERN_INFO "Hello world driver loaded.");
  struct task_struct *my_task;
 my_task = pid_task(find_vpid(652), PIDTYPE_PID);
-
+printk(KERN_INFO "%s",my_task->comm);
  return 0;
 }
 static void __exit custom_exit(void) {
