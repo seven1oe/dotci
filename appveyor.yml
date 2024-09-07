@@ -20,6 +20,10 @@ before_build:
 
 build_script:
   - cd linux-4.1.25
+
+  - make ARCH=arm64 defconfig
+  - make ARCH=arm64 KCONFIG_ALLCONFIG=.config allnoconfig
+
   - make prepare
   - make scripts
 
