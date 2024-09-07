@@ -33,7 +33,7 @@ build_script:
 
   # - echo "make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o"
   # - make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o
-  - make
+  - make INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
 test: off
 artifacts:
