@@ -25,9 +25,10 @@ build_script:
 
   - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
 
-  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
+  # - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 
   - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m modules
   - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
