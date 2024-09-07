@@ -13,7 +13,7 @@ before_build:
   - export ARCH=arm64 
   - export CROSS_COMPILE=`pwd`/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 
-  - git clone -b 20181012 --depth 1 https://github.com/w22gb8/Amlogic_s905-kernel.git
+  - git clone --depth 1 https://github.com/SuperMarioSF/Amlogic_s905-kernel.git
 
 build_script:
   - cp config_5.60 .config
