@@ -26,7 +26,7 @@ build_script:
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
 
-  - make EXTRA_CFLAGS=-fno-pie M=drivers/usb/class CONFIG_USB_PRINTER=m modules
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m modules
 
 test: off
 artifacts:
