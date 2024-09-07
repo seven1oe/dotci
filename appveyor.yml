@@ -31,8 +31,9 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/hello
 
-  - echo "make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o"
-  - make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o
+  # - echo "make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o"
+  # - make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o
+  - make
 
 test: off
 artifacts:
