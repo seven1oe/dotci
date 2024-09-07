@@ -21,6 +21,8 @@ build_script:
   - make ARCH=arm64 defconfig
   - make ARCH=arm64 KCONFIG_ALLCONFIG=.config allnoconfig
 
+  - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
+
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
 
