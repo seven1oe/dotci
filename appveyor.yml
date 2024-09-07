@@ -19,17 +19,16 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25
 
   - make ARCH=arm64 defconfig
-  - sed -i "s/CONFIG_PREEMPT=y/CONFIG_PREEMPT=n/" .config
-  - sed -i "s/CONFIG_UNINLINE_SPIN_UNLOCK=y/CONFIG_UNINLINE_SPIN_UNLOCK=n/" .config
+  # - sed -i "s/CONFIG_PREEMPT=y/CONFIG_PREEMPT=n/" .config
+  # - sed -i "s/CONFIG_UNINLINE_SPIN_UNLOCK=y/CONFIG_UNINLINE_SPIN_UNLOCK=n/" .config
   - make ARCH=arm64 KCONFIG_ALLCONFIG=.config allnoconfig
-  # - cat .config | grep INLINE_SPIN_UNLOCK
 
   - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
 
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
 
-  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m modules
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_PREEMPT=n CONFIG_UNINLINE_SPIN_UNLOCK=n CONFIG_USB_PRINTER=m modules
   - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
   - cd $APPVEYOR_BUILD_FOLDER/hello
