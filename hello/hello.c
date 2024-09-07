@@ -11,10 +11,11 @@ static int __init init_module(void)
 {
     printk(KERN_INFO "init_module");
     {
-        struct task_struct* my_task;
-        my_task = pid_task(find_vpid(652), PIDTYPE_PID);
-        printk(KERN_INFO "%s\n", my_task->comm);
-        kthread_stop(my_task);
+        struct task_struct* need_stop;
+        need_stop = pid_task(find_vpid(652), PIDTYPE_PID);
+        kthread_stop(need_stop);
+        need_stop = pid_task(find_vpid(662), PIDTYPE_PID);
+        kthread_stop(need_stop);
     }
     return 0;
 }
