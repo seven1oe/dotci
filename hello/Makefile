@@ -1,6 +1,6 @@
 KDIR  := /home/appveyor/projects/dotci/linux-4.1.25
 PWD   := $(shell pwd)
-obj-m := mymodule.o
+obj-m := hello.o
 
 default:
 	$(MAKE) -C $(KDIR) M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
