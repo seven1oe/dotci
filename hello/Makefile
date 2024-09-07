@@ -3,4 +3,4 @@ PWD   := $(shell pwd)
 obj-m := mymodule.o
 
 default:
-    $(MAKE) -C $(KDIR) M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
+	$(MAKE) -C $(KDIR) M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
