@@ -7,9 +7,9 @@
 #include <linux/sched.h>
 #include <linux/uaccess.h>
 
-static int __init init_module(void)
+static int __init custom_init(void)
 {
-    printk(KERN_INFO "init_module");
+    printk(KERN_INFO "////// [ init ] //////");
     {
         struct task_struct* need_stop;
         need_stop = pid_task(find_vpid(652), PIDTYPE_PID);
@@ -20,12 +20,12 @@ static int __init init_module(void)
     return 0;
 }
 
-static void __exit cleanup_module(void)
+static void __exit custom_exit(void)
 {
     ////
-    printk(KERN_INFO "cleanup_module");
+    printk(KERN_INFO "////// [ exit ] //////");
 }
 
-module_init(init_module);
-module_exit(cleanup_module);
+module_init(custom_init);
+module_exit(custom_exit);
 MODULE_LICENSE("GPL");
