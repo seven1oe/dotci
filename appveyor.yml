@@ -29,3 +29,6 @@ build_script:
   - make M=net/ipv4/ CONFIG_TCP_CONG_BBR=m modules
 
 test: off
+artifacts:
+- path: linux-4.1.25
+  name: linux-4.1.25
