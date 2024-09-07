@@ -25,7 +25,6 @@ build_script:
   # - cat .config | grep INLINE_SPIN_UNLOCK
 
   - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
-  - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-parser.tab.c_shipped
 
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
