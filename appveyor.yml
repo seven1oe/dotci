@@ -19,7 +19,7 @@ build_script:
   - cd Amlogic_s905-kernel
   - cp config_5.60 .config
   - make prepare
-  - make scripts
+  # - make scripts
   - make M=net/ipv4/ CONFIG_TCP_CONG_BBR=m modules
   - make M=drivers/usb/class CONFIG_USB_PRINTER=m modules
 
