@@ -1,31 +1,19 @@
-/*  hello-1.c - The simplest kernel module.
- *
- *  Copyright (C) 2001 by Peter Jay Salzman
- *
- *  08/02/2006 - Updated by Rodrigo Rubira Branco <rodrigo@kernelhacking.com>
- */
-
-/* Kernel Programming */
-#define MODULE
-#define LINUX
-#define __KERNEL__
-
-#include <linux/module.h>  /* Needed by all modules */
-#include <linux/kernel.h>  /* Needed for KERN_ALERT */
-
-
-int init_module(void)
-{
-   //printk("<1>Hello world 1.\n");
-	
-   // A non 0 return means init_module failed; module can't be loaded.
-   return 0;
-}
-
-
-void cleanup_module(void)
-{
-  //printk(KERN_ALERT "Goodbye world 1.\n");
-}  
-
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/uaccess.h>
+#include <linux/fs.h>
+#include <linux/proc_fs.h>
+// Module metadata
+MODULE_AUTHOR("Ruan de Bruyn");
+MODULE_DESCRIPTION("Hello world driver");
 MODULE_LICENSE("GPL");
+// Custom init and exit methods
+static int __init custom_init(void) {
+ printk(KERN_INFO "Hello world driver loaded.");
+ return 0;
+}
+static void __exit custom_exit(void) {
+ printk(KERN_INFO "Goodbye my friend, I shall miss you dearly...");
+}
+module_init(custom_init);
+module_exit(custom_exit);
