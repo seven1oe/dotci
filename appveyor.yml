@@ -15,8 +15,8 @@ before_build:
 build_script:
   - cd Amlogic_s905-kernel
   - cp config_5.60 .config
-  - make ARCH=arm64 CROSS_COMPILE=`pwd`/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu- prepare
-  - make ARCH=arm64 CROSS_COMPILE=`pwd`/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu- scripts
+  - make ARCH=arm64 CROSS_COMPILE=/home/appveyor/projects/dotci/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu- prepare
+  - make ARCH=arm64 CROSS_COMPILE=/home/appveyor/projects/dotci/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu- scripts
   - make M=net/ipv4/ CONFIG_TCP_CONG_BBR=m modules
   - make M=drivers/usb/class CONFIG_USB_PRINTER=m modules
 
