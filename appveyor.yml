@@ -16,6 +16,7 @@ before_build:
   - git clone --depth 1 https://github.com/SuperMarioSF/Amlogic_s905-kernel.git
 
 build_script:
+  - cd Amlogic_s905-kernel
   - cp config_5.60 .config
   - make prepare
   - make scripts
