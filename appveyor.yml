@@ -1,0 +1,25 @@
+version: 1.0.{build}
+
+image: Ubuntu2004
+
+install:
+  - sudo apt-get update
+  - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc
+
+before_build:
+  - wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz
+  - tar -xJf gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz
+
+  - export ARCH=arm64 
+  - export CROSS_COMPILE=`pwd`/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+
+  - git clone -b 20181012 --depth 1 https://github.com/w22gb8/Amlogic_s905-kernel.git
+
+build_script:
+  - cp config_5.60 .config
+  - make prepare
+  - make scripts
+  - make M=net/ipv4/ CONFIG_TCP_CONG_BBR=m modules
+  - make M=drivers/usb/class CONFIG_USB_PRINTER=m modules
+
+test: off
