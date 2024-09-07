@@ -25,6 +25,7 @@ build_script:
 
   - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
 
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- oldconfig
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
 
