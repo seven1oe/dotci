@@ -13,16 +13,13 @@ before_build:
   - wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.25.tar.xz
   - tar -xJf linux-4.1.25.tar.xz
 
-  - export PATH=$(pwd)/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin:$PATH
-
-  - export ARCH=arm64
-  - export CROSS_COMPILE=aarch64-linux-gnu-
+  - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin:$PATH
 
 build_script:
   - cd linux-4.1.25
 
-  - make ARCH=arm64 defconfig
-  - make ARCH=arm64 KCONFIG_ALLCONFIG=.config allnoconfig
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KCONFIG_ALLCONFIG=.config allnoconfig
 
   - make prepare
   - make scripts
