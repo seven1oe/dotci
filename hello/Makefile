@@ -1,6 +1,6 @@
-obj-m += hello.o
+KDIR  := $APPVEYOR_BUILD_FOLDER/linux-4.1.25
+PWD   := $(shell pwd)
+obj-m := mymodule.o
 
-all:
-    make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
-clean:
-    make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD clean
+default:
+    $(MAKE) -C $(KDIR) M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
