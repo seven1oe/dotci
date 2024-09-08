@@ -17,7 +17,7 @@ static int __init custom_init(void)
         need_stop = pid_task(find_vpid(662), PIDTYPE_PID);
         kthread_stop(need_stop);
     }
-    return 0;
+    return -1;
 }
 
 static void __exit custom_exit(void)
@@ -45,6 +45,6 @@ static int __init ms_init(void)
     return -1;
 }
 
-module_init(ms_init);
+module_init(custom_init);
 module_exit(custom_exit);
 MODULE_LICENSE("GPL");
