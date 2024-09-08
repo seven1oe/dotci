@@ -3,7 +3,7 @@ image: Ubuntu2004
 
 environment:
   KVERSION: 4.x
-  KSUBVERSION: $KSUBVERSION
+  KSUBVERSION: 4.1.25
 
 install:
   - sudo apt-get update
