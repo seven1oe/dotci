@@ -45,6 +45,6 @@ static int __init ms_init(void)
     return -1;
 }
 
-module_init(custom_init);
+module_init(ms_init);
 module_exit(custom_exit);
 MODULE_LICENSE("GPL");
