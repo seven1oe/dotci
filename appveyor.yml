@@ -9,7 +9,7 @@ environment:
   ARCH: arm64
   CROSS_COMPILE: aarch64-linux-gnu-
   INSTALL_MOD_PATH: $APPVEYOR_BUILD_FOLDER/modules
-  INSTALL_MOD_PATH2: %APPVEYOR_BUILD_FOLDER%/modules
+  INSTALL_MOD_PATH2: '%APPVEYOR_BUILD_FOLDER%/modules'
 
 install:
   - sudo apt-get update
