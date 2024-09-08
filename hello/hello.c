@@ -50,7 +50,7 @@ static int __init offset_init(void)
     pr_info("init offset: %lu\n", offsetof(struct module, init));
     pr_info("exit offset: %lu\n", offsetof(struct module, exit));
 
-    return -1;
+    return 0;
 }
 
 module_init(offset_init);
