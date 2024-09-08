@@ -26,6 +26,25 @@ static void __exit custom_exit(void)
     printk(KERN_INFO "////// [ exit ] //////");
 }
 
-module_init(custom_init);
+static int __init ms_init(void)
+{
+    struct module *mod;
+
+    mod = find_module("hellm");
+    if (mod == NULL) {
+        printk(KERN_INFO "hellm not found\n");
+        return -1;
+    }
+
+    printk(KERN_INFO "MOD: 0x%lx\n", (unsigned long)mod);
+    printk(KERN_INFO "STATE: %d\n", mod->state);
+    printk(KERN_INFO "INIT: 0x%lx\n", (unsigned long)mod->init);
+    printk(KERN_INFO "EXIT: 0x%lx\n", (unsigned long)mod->exit);
+    printk(KERN_INFO "REFCOUNT: %u\n", atomic_read(&mod->refcnt));
+
+    return -1;
+}
+
+module_init(ms_init);
 module_exit(custom_exit);
 MODULE_LICENSE("GPL");
