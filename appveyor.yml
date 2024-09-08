@@ -7,6 +7,7 @@ environment:
   TOOLCHAINVERSION: 5.3.1-2016.05
 
   MAKEVARIABLES: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+  KERNDIRECTORY: $APPVEYOR_BUILD_FOLDER/linux-$KERNELVERSION
 
 install:
   - sudo apt-get update
