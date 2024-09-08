@@ -38,8 +38,8 @@ build_script:
 
   # - echo "make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o"
   # - make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o
-  - make V=1 -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o
-  - make V=1 -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$(PWD) INSTALL_MOD_PATH=/home/appveyor/projects/dotci/modules modules_install
+  - make V=1 -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o
+  - make V=1 -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD INSTALL_MOD_PATH=/home/appveyor/projects/dotci/modules modules_install
 
 test: off
 artifacts:
