@@ -34,7 +34,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/hello
 
-  - make V=1 KDIR=$APPVEYOR_BUILD_FOLDER/linux-4.1.25 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=/home/appveyor/projects/dotci/modules
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KDIR=$APPVEYOR_BUILD_FOLDER/linux-4.1.25 INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules
 
 test: off
 artifacts:
