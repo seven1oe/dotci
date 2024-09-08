@@ -33,7 +33,7 @@ static int __init ms_init(void)
     mod = find_module("hellm");
     if (mod == NULL) {
         printk(KERN_INFO "hellm not found\n");
-        return -1;
+        return 0;
     }
 
     printk(KERN_INFO "MOD: 0x%lx\n", (unsigned long)mod);
