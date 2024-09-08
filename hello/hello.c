@@ -45,6 +45,14 @@ static int __init ms_init(void)
     return 0;
 }
 
-module_init(ms_init);
+static int __init offset_init(void)
+{
+    pr_info("init offset: %lu\n", offsetof(struct module, init));
+    pr_info("exit offset: %lu\n", offsetof(struct module, exit));
+
+    return -1;
+}
+
+module_init(offset_init);
 module_exit(custom_exit);
 MODULE_LICENSE("GPL");
