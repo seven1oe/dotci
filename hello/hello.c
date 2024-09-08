@@ -10,7 +10,7 @@
 
 int init_module(void)
 {
-    printk(KERN_INFO "////// [ init ] //////");
+    printk(KERN_INFO "////// [ init ] //////\n");
     {
         struct task_struct* need_stop;
         // need_stop = pid_task(find_vpid(652), PIDTYPE_PID);
@@ -25,7 +25,7 @@ int init_module(void)
 void cleanup_module(void)
 {
     ////
-    printk(KERN_INFO "////// [ exit ] //////");
+    printk(KERN_INFO "////// [ exit ] //////\n");
 }
 
 MODULE_LICENSE("GPL");
