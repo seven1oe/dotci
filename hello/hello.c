@@ -8,7 +8,7 @@
 #include <linux/sched.h>
 #include <linux/uaccess.h>
 
-int init_module(void)
+static int __init custom_init(void)
 {
     printk(KERN_INFO "////// [ init ] //////\n");
     {
@@ -22,10 +22,12 @@ int init_module(void)
     return 0;
 }
 
-void cleanup_module(void)
+static void __exit custom_exit(void)
 {
     ////
     printk(KERN_INFO "////// [ exit ] //////\n");
 }
 
+module_init(custom_init);
+module_exit(custom_exit);
 MODULE_LICENSE("GPL");
