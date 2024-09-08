@@ -8,14 +8,12 @@ environment:
 
   ARCH: arm64
   CROSS_COMPILE: aarch64-linux-gnu-
-  INSTALL_MOD_PATH: $APPVEYOR_BUILD_FOLDER/modules
-  INSTALL_MOD_PATH2: '%APPVEYOR_BUILD_FOLDER%/modules'
+  INSTALL_MOD_PATH: ${APPVEYOR_BUILD_FOLDER}/modules
 
 install:
   - sudo apt-get update
   - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc
   - echo $INSTALL_MOD_PATH
-  - echo $INSTALL_MOD_PATH2
 before_build:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/aarch64-linux-gnu/gcc-linaro-$TOOLCHAINVERSION-x86_64_aarch64-linux-gnu.tar.xz
   - tar -xJf gcc-linaro-$TOOLCHAINVERSION-x86_64_aarch64-linux-gnu.tar.xz
