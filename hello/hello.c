@@ -1,3 +1,4 @@
+#include <linux/delay.h>
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <linux/kthread.h>
@@ -6,7 +7,6 @@
 #include <linux/proc_fs.h>
 #include <linux/sched.h>
 #include <linux/uaccess.h>
-#include <linux/delay.h>
 
 int init_module(void)
 {
@@ -18,7 +18,7 @@ int init_module(void)
         // need_stop = pid_task(find_vpid(662), PIDTYPE_PID);
         // kthread_stop(need_stop);
     }
-	msleep(2000);
+    msleep(2000);
     return 0;
 }
 
