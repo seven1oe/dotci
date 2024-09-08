@@ -6,9 +6,6 @@ environment:
   KERNELVERSION: 4.1.25
   TOOLCHAINVERSION: 5.3.1-2016.05
 
-  MAKEVARIABLES: ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-  KERNDIRECTORY: $APPVEYOR_BUILD_FOLDER/linux-$KERNELVERSION
-
 install:
   - sudo apt-get update
   - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc
@@ -25,7 +22,7 @@ before_build:
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/linux-$KERNELVERSION
 
-  - make ${MAKEVARIABLES} defconfig
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
   # fix
   - sed -i "s/CONFIG_JUMP_LABEL=y/CONFIG_JUMP_LABEL=n/" .config
   - sed -i "s/# CONFIG_MODULE_SIG is not set/CONFIG_MODULE_SIG=y/" .config
@@ -33,19 +30,19 @@ build_script:
   - sed -i "s/CONFIG_PREEMPT=y/CONFIG_PREEMPT=n/" .config
   - sed -i "s/CONFIG_UNINLINE_SPIN_UNLOCK=y/CONFIG_UNINLINE_SPIN_UNLOCK=n/" .config
 
-  - make ${MAKEVARIABLES} KCONFIG_ALLCONFIG=.config allnoconfig
-  - make ${MAKEVARIABLES} prepare
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KCONFIG_ALLCONFIG=.config allnoconfig
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
 
   - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
-  - make ${MAKEVARIABLES} scripts
+  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
 
-  - make V=1 ${MAKEVARIABLES} M=drivers/usb/class CONFIG_USB_PRINTER=m modules
-  - make V=1 ${MAKEVARIABLES} M=drivers/usb/class CONFIG_USB_PRINTER=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m modules
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
   - cd $APPVEYOR_BUILD_FOLDER/hello
 
-  - make V=1 ${MAKEVARIABLES} -C $APPVEYOR_BUILD_FOLDER/linux-$KERNELVERSION M=$PWD modules
-  - make V=1 ${MAKEVARIABLES} -C $APPVEYOR_BUILD_FOLDER/linux-$KERNELVERSION M=$PWD INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-$KERNELVERSION M=$PWD modules
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-$KERNELVERSION M=$PWD INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
 test: off
 artifacts:
