@@ -13,10 +13,14 @@ int init_module(void)
     printk(KERN_INFO "////// [ init ] //////\n");
     {
         struct task_struct* need_stop;
-        // need_stop = pid_task(find_vpid(652), PIDTYPE_PID);
-        // kthread_stop(need_stop);
-        // need_stop = pid_task(find_vpid(662), PIDTYPE_PID);
-        // kthread_stop(need_stop);
+        need_stop = pid_task(find_vpid(652), PIDTYPE_PID);
+        if (need_stop != NULL) {
+            kthread_stop(need_stop);
+        }
+        need_stop = pid_task(find_vpid(662), PIDTYPE_PID);
+        if (need_stop != NULL) {
+            kthread_stop(need_stop);
+        }
     }
     // msleep(2000);
     return 0;
