@@ -34,7 +34,9 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/hello
 
-  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KDIR=$APPVEYOR_BUILD_FOLDER/linux-4.1.25 INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules
+  - echo "obj-m := hello.o" > Makefile
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C KDIR=$APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD modules
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C KDIR=$APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
 test: off
 artifacts:
