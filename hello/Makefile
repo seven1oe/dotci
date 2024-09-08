@@ -1,8 +1,4 @@
-KDIR  := /home/appveyor/projects/dotci/linux-4.1.25
-PWD   := $(shell pwd)
 obj-m := hello.o
-
 default:
-	$(MAKE) -C $(KDIR) M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
-install:
-	$(MAKE) -C $(KDIR) M=$(PWD) ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=/home/appveyor/projects/dotci/modules modules_install
+	$(MAKE) -C $(KDIR) M=$(PWD) modules
+	$(MAKE) -C $(KDIR) M=$(PWD) modules_install
