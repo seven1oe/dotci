@@ -1,5 +1,4 @@
 version: 1.0.{build}
-
 image: Ubuntu2004
 
 install:
@@ -26,7 +25,6 @@ build_script:
 
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KCONFIG_ALLCONFIG=.config allnoconfig
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
-  # - cat .config
 
   - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
@@ -36,8 +34,6 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/hello
 
-  # - echo "make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o"
-  # - make -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- hello.o
   - make V=1
   - make V=1 install
 
