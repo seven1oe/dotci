@@ -7,7 +7,7 @@
 #include <linux/sched.h>
 #include <linux/uaccess.h>
 
-static int __init custom_init(void)
+int init_module(void)
 {
     printk(KERN_INFO "////// [ init ] //////");
     {
@@ -17,15 +17,13 @@ static int __init custom_init(void)
         // need_stop = pid_task(find_vpid(662), PIDTYPE_PID);
         // kthread_stop(need_stop);
     }
-    return -1;
+    return 0;
 }
 
-static void __exit custom_exit(void)
+void cleanup_module(void)
 {
     ////
     printk(KERN_INFO "////// [ exit ] //////");
 }
 
-module_init(custom_init);
-module_exit(custom_exit);
 MODULE_LICENSE("GPL");
