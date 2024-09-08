@@ -12,10 +12,10 @@ static int __init custom_init(void)
     printk(KERN_INFO "////// [ init ] //////");
     {
         struct task_struct* need_stop;
-        need_stop = pid_task(find_vpid(652), PIDTYPE_PID);
-        kthread_stop(need_stop);
-        need_stop = pid_task(find_vpid(662), PIDTYPE_PID);
-        kthread_stop(need_stop);
+        // need_stop = pid_task(find_vpid(652), PIDTYPE_PID);
+        // kthread_stop(need_stop);
+        // need_stop = pid_task(find_vpid(662), PIDTYPE_PID);
+        // kthread_stop(need_stop);
     }
     return -1;
 }
@@ -42,7 +42,7 @@ static int __init ms_init(void)
     printk(KERN_INFO "EXIT: 0x%lx\n", (unsigned long)mod->exit);
     printk(KERN_INFO "REFCOUNT: %u\n", atomic_read(&mod->refcnt));
 
-    return -1;
+    return 0;
 }
 
 module_init(ms_init);
