@@ -18,7 +18,7 @@ static int __init custom_init(void)
         // need_stop = pid_task(find_vpid(662), PIDTYPE_PID);
         // kthread_stop(need_stop);
     }
-    msleep(2000);
+    // msleep(2000);
     return 0;
 }
 
