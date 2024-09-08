@@ -2,8 +2,8 @@ version: 1.0.{build}
 image: Ubuntu2004
 
 environment:
-  KERNEL_VERSION: 4.x
-  KERNEL_SUBVERSION: $KERNEL_SUBVERSION
+  KVERSION: 4.x
+  KSUBVERSION: $KSUBVERSION
 
 install:
   - sudo apt-get update
@@ -13,13 +13,13 @@ before_build:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/aarch64-linux-gnu/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
   - tar -xJf gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
 
-  - wget https://cdn.kernel.org/pub/linux/kernel/v$KERNEL_VERSION/linux-$KERNEL_SUBVERSION.tar.xz
-  - tar -xJf linux-$KERNEL_SUBVERSION.tar.xz
+  - wget https://cdn.kernel.org/pub/linux/kernel/v$KVERSION/linux-$KSUBVERSION.tar.xz
+  - tar -xJf linux-$KSUBVERSION.tar.xz
 
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin:$PATH
 
 build_script:
-  - cd $APPVEYOR_BUILD_FOLDER/linux-$KERNEL_SUBVERSION
+  - cd $APPVEYOR_BUILD_FOLDER/linux-$KSUBVERSION
 
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
   # usblp
@@ -40,8 +40,8 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/hello
 
-  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-$KERNEL_SUBVERSION M=$PWD modules
-  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-$KERNEL_SUBVERSION M=$PWD INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-$KSUBVERSION M=$PWD modules
+  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-$KSUBVERSION M=$PWD INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
 test: off
 artifacts:
