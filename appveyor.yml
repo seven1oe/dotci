@@ -20,7 +20,7 @@ before_build:
     gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/share/gdb/
     gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gdb.exe
     EOF
-  - xz -d -c gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz | bsdtar --format gnutar $(sed -rn 's/(.+)/--include \1/p' INCLUDE) -cJf - @- | xz -z gdb-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
+  - xz -d -c gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz | bsdtar --format gnutar $(sed -rn 's/(.+)/--include \1/p' INCLUDE) -cJf - @- | xz > gdb-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
 
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25
