@@ -20,6 +20,9 @@ before_build:
     gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/share/gdb/
     gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gdb.exe
     EOF
+  - cat INCLUDE
+  - sed -rn 's/(.+)/--include \1/p' INCLUDE | tr '\n' ' '
+  - echo $(sed -rn 's/(.+)/--include \1/p' INCLUDE | tr '\n' ' ')
   - xz -d -c gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz | bsdtar --format gnutar $(sed -rn 's/(.+)/--include \1/p' INCLUDE | tr '\n' ' ') -cJf gdb-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz @-
 
 build_script:
