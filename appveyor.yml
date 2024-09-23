@@ -1,14 +1,9 @@
 version: 1.0.{build}
 image: Ubuntu2004
-environment:
-  APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvVrxkmIikNbILEizwR57dPemc96K7BMDHmf82WicRxbprYY9H7DZJnYymC3IE+iru5jYBZ4f7T3jMIoEurNCpxh0b5xdMjf1JCX975ag2JcAuQYRQivzMrvNXTSSSn1GVp/AA8d6Tz0c403ERsx809OfTK5ntWacAkRYzn/0MiwWevnVlmjUH6eMaDRg3f1oU5PUxFETFWHOFpRJqXBsaLGAhNlcG1TfpXup/jzx/QqdEKBPNZmZLmrd0vDKWLKN4op/jqLA3tMQeDDaalUieJ1XGIy6++w3fWJC5DRb05IvCm8abgcAQard8mKQwP+eM7m4VqnY29LvEsmjyKo1Vw== rsa 2048-082321
 
-init:
-  - sh: export APPVEYOR_SSH_BLOCK=true
-  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 install:
   - sudo apt-get update
-  - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc
+  - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc libarchive-tools
 
 before_build:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/aarch64-linux-gnu/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
@@ -18,6 +13,14 @@ before_build:
   - tar -xJf linux-4.1.25.tar.xz
 
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin:$PATH
+  - |-
+    cat > INCLUDE << EOF
+    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/dll/
+    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/pylib/
+    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/share/gdb/
+    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gdb.exe
+    EOF
+  - xz -d -c gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz | bsdtar --format gnutar $(sed -rn 's/(.+)/--include \1/p' INCLUDE) -cJf - @- | xz -z gdb-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
 
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25
