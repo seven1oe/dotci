@@ -51,3 +51,5 @@ test: off
 artifacts:
 - path: modules
   name: modules
+- path: gdb-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
+  name: gdb-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
