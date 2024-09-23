@@ -1,6 +1,11 @@
 version: 1.0.{build}
 image: Ubuntu2004
+environment:
+  APPVEYOR_SSH_KEY: <your ssh public key>
 
+init:
+  - sh: export APPVEYOR_SSH_BLOCK=true
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 install:
   - sudo apt-get update
   - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc
