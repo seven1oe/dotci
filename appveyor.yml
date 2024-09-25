@@ -40,7 +40,7 @@ build_script:
   - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD modules
   - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
-after_success:
+after_build:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/arm-linux-gnueabihf/gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz
   - |-
     cat > INCLUDE << EOF
