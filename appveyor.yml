@@ -15,7 +15,7 @@ before_build:
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin:$PATH
 
 build_script:
-  - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25
+  - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25 # ---
 
   - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
   # fix
@@ -35,7 +35,7 @@ build_script:
   - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m modules
   - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
-  - cd $APPVEYOR_BUILD_FOLDER/hello
+  - cd $APPVEYOR_BUILD_FOLDER/hello # ---
 
   - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD modules
   - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
