@@ -5,10 +5,12 @@ install:
   - sudo apt-get update
   - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc libarchive-tools
 
-before_build:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/aarch64-linux-gnu/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
   - tar -xJf gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
 
+  - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin:$PATH
+
+before_build:
   - wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.25.tar.xz
   - tar -xJf linux-4.1.25.tar.xz
 
@@ -23,8 +25,6 @@ before_build:
     # EOF
   # - xz -d -c gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz |
     # bsdtar --format gnutar $(sed -r 's/(.+)/--include \1/' INCLUDE | tr '\n' ' ') -cJf gdb-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz @-
-
-  - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin:$PATH
 
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25
