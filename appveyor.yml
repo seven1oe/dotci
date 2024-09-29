@@ -18,10 +18,13 @@ before_build:
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
 
 build_script:
-  - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
-  - make USE_WRAP=1
+  - cd $APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6
+  - make CC=aarch64-linux-gnu-gcc LDFLAGS="-static"
+
+  # - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
+  # - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
 
 test: off
 artifacts:
-- path: p910nd-0.97
-  name: p910nd-0.97
+- path: tcp_wrappers_7.6
+  name: tcp_wrappers_7.6
