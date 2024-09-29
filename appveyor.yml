@@ -10,7 +10,7 @@ before_build:
   - tar -xJf gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
 
   - wget https://github.com/kenyapcomau/p910nd/archive/0.97/p910nd-0.97.tar.gz
-  - tar -xJf p910nd-0.97.tar.gz
+  - tar -xzf p910nd-0.97.tar.gz
 
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
 
