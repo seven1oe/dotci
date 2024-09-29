@@ -19,7 +19,7 @@ before_build:
 
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6
-  - make CC=aarch64-linux-gnu-gcc LDFLAGS="-static"
+  - make CC=aarch64-linux-gnu-gcc LDFLAGS="-static" linux
 
   # - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   # - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
