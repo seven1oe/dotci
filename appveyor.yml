@@ -26,7 +26,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - sed -i "s#-lwrap#$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6/libwrap.a#" Makefile
-  - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
+  - make CROSS=arm-linux-gnueabihf- CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
 
 test: off
 artifacts:
