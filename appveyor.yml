@@ -69,7 +69,5 @@ on_finish:
 
 test: off
 artifacts:
-- path: tcp_wrappers_7.6
-  name: tcp_wrappers_7.6
-- path: p910nd-0.97
-  name: p910nd-0.97
+- path: cups-2.4.10
+  name: cups-2.4.10
