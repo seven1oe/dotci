@@ -46,14 +46,14 @@ build_script:
   - sed -i "s#-lwrap#$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6/libwrap.a#" Makefile
   - make CROSS=arm-linux-gnueabihf- CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
 
-  - cd $APPVEYOR_BUILD_FOLDER/openssl-3.3.2
-  - ./Configure --prefix=$APPVEYOR_BUILD_FOLDER/build --cross-compile-prefix=arm-linux-gnueabihf- shared linux-generic32
-  - make
+  # - cd $APPVEYOR_BUILD_FOLDER/openssl-3.3.2
+  # - ./Configure --prefix=$APPVEYOR_BUILD_FOLDER/build --cross-compile-prefix=arm-linux-gnueabihf- shared linux-generic32
+  # - make
 
-  - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
-  - ./configure --help
-  - ./configure --prefix=$APPVEYOR_BUILD_FOLDER/build --host=arm-linux-gnueabihf --disable-udev
-  - make
+  # - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
+  # - ./configure --help
+  # - ./configure --prefix=$APPVEYOR_BUILD_FOLDER/build --host=arm-linux-gnueabihf --disable-udev
+  # - make
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
@@ -62,6 +62,7 @@ build_script:
                                                                                                              --disable-dbus
                                                                                                              --with-tls=no
   - make
+  - make install
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
