@@ -37,7 +37,7 @@ build_script:
                 --with-icondir=$APPVEYOR_BUILD_FOLDER/usr/share/icons
                 --with-menudir=$APPVEYOR_BUILD_FOLDER/usr/share/applications
   - make
-  - make STRIP=arm-linux-gnueabihf-strip install
+  - make STRIP=arm-linux-gnueabihf-strip CUPS_PRIMARY_SYSTEM_GROUP=$USER install
 
 on_finish:
   - sh: export APPVEYOR_SSH_BLOCK=true
