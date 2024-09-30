@@ -18,6 +18,9 @@ before_build:
   - wget https://github.com/kenyapcomau/p910nd/archive/0.97/p910nd-0.97.tar.gz
   - tar -xzf p910nd-0.97.tar.gz
 
+  - wget https://github.com/OpenPrinting/cups/releases/download/v2.4.10/cups-2.4.10-source.tar.gz
+  - tar -xzf cups-2.4.10-source.tar.gz
+
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
 
 build_script:
@@ -33,6 +36,9 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - sed -i "s#-lwrap#$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6/libwrap.a#" Makefile
   - make CROSS=arm-linux-gnueabihf- CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
+
+  - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
+  - ./configure --help
 
 test: off
 artifacts:
