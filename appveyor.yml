@@ -64,7 +64,7 @@ build_script:
                                                                                                              --disable-dbus
                                                                                                              --with-tls=no
   - make
-  - make install
+  - sudo make install
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
