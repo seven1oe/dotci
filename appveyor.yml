@@ -61,6 +61,7 @@ build_script:
   - ./configure --help
   - ./configure CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/lib" --prefix=$APPVEYOR_BUILD_FOLDER/build 
                                                                                                              --host=arm-linux-gnueabihf
+                                                                                                             --disable-shared
                                                                                                              --disable-dbus
                                                                                                              --with-tls=no
   - make
