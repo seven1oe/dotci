@@ -22,7 +22,7 @@ before_build:
 
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build CROSS=arm-linux-gnueabihf-
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build CROSS=arm-linux-gnueabihf- install
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
