@@ -27,6 +27,7 @@ build_script:
     done
   # - sed -i "s#extern char \*malloc();##" scaffold.c
   # - sed -i "s#EXTRA_CFLAGS=\"-DBROKEN_SO_LINGER\"#EXTRA_CFLAGS=\"-DBROKEN_SO_LINGER -DSYS_ERRLIST_DEFINED\"#" Makefile
+  - sed -i "s#NETGROUP=\"-DNETGROUP\"#NETGROUP=#" Makefile
   - make CC=arm-linux-gnueabihf-gcc REAL_DAEMON_DIR="/sbin" STYLE="-DPROCESS_OPTIONS" linux
 
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
