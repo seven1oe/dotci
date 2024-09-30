@@ -45,13 +45,17 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/openssl-3.3.2
   - ./Configure --help
+  - ./Configure --cross-compile-prefix=arm-linux-gnueabihf- linux-generic32
+  - make
 
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
   - ./configure --help
+  - ./configure
+  - make
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf
+  - ./configure --host=arm-linux-gnueabihf CFLAGS="-I$APPVEYOR_BUILD_FOLDER/openssl-3.3.2/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/openssl-3.3.2/lib"
   - make
 
 test: off
