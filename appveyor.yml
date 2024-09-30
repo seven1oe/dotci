@@ -50,7 +50,7 @@ build_script:
   - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
   - cd $APPVEYOR_BUILD_FOLDER/openssl-3.3.2
-  - ./Configure --cross-compile-prefix=arm-linux-gnueabihf- linux-generic32
+  - ./Configure --cross-compile-prefix=arm-linux-gnueabihf- --prefix=$APPVEYOR_BUILD_FOLDER/build linux-generic32
   - make
 
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
