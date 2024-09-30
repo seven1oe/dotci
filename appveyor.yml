@@ -38,7 +38,7 @@ build_script:
   - make CROSS=arm-linux-gnueabihf- CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
-  - ./configure --help
+  - ./configure
 
 test: off
 artifacts:
