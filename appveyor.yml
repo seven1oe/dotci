@@ -42,9 +42,11 @@ build_script:
   - sed -i "s#NETGROUP=\"-DNETGROUP\"#NETGROUP=#" Makefile
   - make CC=arm-linux-gnueabihf-gcc REAL_DAEMON_DIR="/sbin" STYLE="-DPROCESS_OPTIONS" linux
 
+  # - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
+  # - sed -i "s#-lwrap#$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6/libwrap.a#" Makefile
+  # - make CROSS=arm-linux-gnueabihf- CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
-  - sed -i "s#-lwrap#$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6/libwrap.a#" Makefile
-  - make CROSS=arm-linux-gnueabihf- # CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
+  - make CROSS=arm-linux-gnueabihf-
 
   # - cd $APPVEYOR_BUILD_FOLDER/openssl-3.3.2
   # - ./Configure --prefix=$APPVEYOR_BUILD_FOLDER/build --cross-compile-prefix=arm-linux-gnueabihf- shared linux-generic32
