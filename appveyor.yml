@@ -24,7 +24,7 @@ build_script:
   - make CC=arm-linux-gnueabihf-gcc REAL_DAEMON_DIR="/sbin" STYLE="-DPROCESS_OPTIONS" linux
 
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
-  - sed -i "s/-lwrap/libwrap.a/" Makefile
+  - sed -i "s/-lwrap/-L$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6 libwrap.a/" Makefile
   - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
 
 test: off
