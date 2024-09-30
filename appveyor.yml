@@ -1,6 +1,9 @@
 version: 1.0.{build}
 image: Ubuntu2004
 
+environment:
+  APPVEYOR_SSH_KEY: <your ssh public key>
+
 install:
   - sudo apt-get update
   - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc
@@ -42,6 +45,9 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - sed -i "s#-lwrap#$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6/libwrap.a#" Makefile
   - make CROSS=arm-linux-gnueabihf- CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
+
+  - sh: export APPVEYOR_SSH_BLOCK=true
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
   - cd $APPVEYOR_BUILD_FOLDER/openssl-3.3.2
   - ./Configure --help
