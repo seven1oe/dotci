@@ -55,7 +55,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
   - ./configure --help
-  - ./configure
+  - ./configure --disable-udev
   - make
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
