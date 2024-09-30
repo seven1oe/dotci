@@ -22,6 +22,7 @@ build_script:
   - sed -i "s#extern char \*malloc();##" scaffold.c
   - sed -i "s#EXTRA_CFLAGS=\"-DBROKEN_SO_LINGER\"#EXTRA_CFLAGS=\"-DBROKEN_SO_LINGER -DSYS_ERRLIST_DEFINED\"#" Makefile
   - make CC=arm-linux-gnueabihf-gcc REAL_DAEMON_DIR="/sbin" STYLE="-DPROCESS_OPTIONS" linux
+  - ls -laF $APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6
 
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - sed -i "s#-lwrap#libwrap.a#" Makefile
