@@ -26,14 +26,19 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
-  - ./configure STRIPPROG=arm-linux-gnueabihf-strip --prefix=$APPVEYOR_BUILD_FOLDER/build
-                                                    --host=arm-linux-gnueabihf
-                                                    --disable-shared
-                                                    --disable-dbus
-                                                    --with-tls=no
-                                                    --with-cups-user=$USER
-                                                    --with-cups-group=$USER
+  - ./configure --prefix=$APPVEYOR_BUILD_FOLDER/build
+                --host=arm-linux-gnueabihf
+                --disable-shared
+                --disable-dbus
+                --with-tls=no
+                --with-cups-user=$USER
+                --with-cups-group=$USER
+                --with-system-groups=$USER
+                --with-rcdir=$APPVEYOR_BUILD_FOLDER/etc
+                --with-icondir=$APPVEYOR_BUILD_FOLDER/usr/share/icons
+                --with-menudir=$APPVEYOR_BUILD_FOLDER/usr/share/applications
   - make
+  - make STRIP=arm-linux-gnueabihf-strip install
 
 on_finish:
   - sh: export APPVEYOR_SSH_BLOCK=true
