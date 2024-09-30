@@ -26,11 +26,13 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
-  - ./configure STRIP=arm-linux-gnueabihf-strip --prefix=$APPVEYOR_BUILD_FOLDER/build
-                                                --host=arm-linux-gnueabihf
-                                                --disable-shared
-                                                --disable-dbus
-                                                --with-tls=no
+  - ./configure STRIPPROG=arm-linux-gnueabihf-strip --prefix=$APPVEYOR_BUILD_FOLDER/build
+                                                    --host=arm-linux-gnueabihf
+                                                    --disable-shared
+                                                    --disable-dbus
+                                                    --with-tls=no
+                                                    --with-cups-user=$USER
+                                                    --with-cups-group=$USER
   - make
 
 on_finish:
