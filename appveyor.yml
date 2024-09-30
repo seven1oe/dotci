@@ -12,50 +12,17 @@ before_build:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/arm-linux-gnueabihf/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
   - tar -xJf gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
 
-  - wget http://ftp.porcupine.org/pub/security/tcp_wrappers_7.6.tar.gz
-  - tar -xzf tcp_wrappers_7.6.tar.gz
-
-  - wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/tcp-wrappers/7.6.q-27/tcp-wrappers_7.6.q-27.debian.tar.xz
-  - tar -xJf tcp-wrappers_7.6.q-27.debian.tar.xz
-
   - wget https://github.com/kenyapcomau/p910nd/archive/0.97/p910nd-0.97.tar.gz
   - tar -xzf p910nd-0.97.tar.gz
 
   - wget https://github.com/OpenPrinting/cups/releases/download/v2.4.10/cups-2.4.10-source.tar.gz
   - tar -xzf cups-2.4.10-source.tar.gz
 
-  - wget https://github.com/openssl/openssl/releases/download/openssl-3.3.2/openssl-3.3.2.tar.gz
-  - tar -xzf openssl-3.3.2.tar.gz
-
-  - wget https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2
-  - tar -xjf libusb-1.0.27.tar.bz2
-
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
 
 build_script:
-  - cd $APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6
-  - for patch in $(cat ../debian/patches/series); do
-        patch -Np1 -i ../debian/patches/${patch};
-    done
-  # - sed -i "s#extern char \*malloc();##" scaffold.c
-  # - sed -i "s#EXTRA_CFLAGS=\"-DBROKEN_SO_LINGER\"#EXTRA_CFLAGS=\"-DBROKEN_SO_LINGER -DSYS_ERRLIST_DEFINED\"#" Makefile
-  - sed -i "s#NETGROUP=\"-DNETGROUP\"#NETGROUP=#" Makefile
-  - make CC=arm-linux-gnueabihf-gcc REAL_DAEMON_DIR="/sbin" STYLE="-DPROCESS_OPTIONS" linux
-
-  # - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
-  # - sed -i "s#-lwrap#$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6/libwrap.a#" Makefile
-  # - make CROSS=arm-linux-gnueabihf- CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - make CROSS=arm-linux-gnueabihf-
-
-  # - cd $APPVEYOR_BUILD_FOLDER/openssl-3.3.2
-  # - ./Configure --prefix=$APPVEYOR_BUILD_FOLDER/build --cross-compile-prefix=arm-linux-gnueabihf- shared linux-generic32
-  # - make
-
-  # - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
-  # - ./configure --help
-  # - ./configure --prefix=$APPVEYOR_BUILD_FOLDER/build --host=arm-linux-gnueabihf --disable-udev
-  # - make
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
