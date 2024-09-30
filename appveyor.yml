@@ -21,6 +21,12 @@ before_build:
   - wget https://github.com/OpenPrinting/cups/releases/download/v2.4.10/cups-2.4.10-source.tar.gz
   - tar -xzf cups-2.4.10-source.tar.gz
 
+  - wget https://github.com/openssl/openssl/releases/download/openssl-3.3.2/openssl-3.3.2.tar.gz
+  - tar -xzf openssl-3.3.2.tar.gz
+
+  - wget https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2
+  - tar -xjf libusb-1.0.27.tar.bz2
+
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
 
 build_script:
@@ -36,6 +42,12 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - sed -i "s#-lwrap#$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6/libwrap.a#" Makefile
   - make CROSS=arm-linux-gnueabihf- CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
+
+  - cd $APPVEYOR_BUILD_FOLDER/openssl-3.3.2
+  - ./Configure --help
+
+  - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
+  - ./configure --help
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
