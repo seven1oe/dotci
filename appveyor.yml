@@ -46,22 +46,26 @@ build_script:
   - sed -i "s#-lwrap#$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6/libwrap.a#" Makefile
   - make CROSS=arm-linux-gnueabihf- CFLAGS="-I$APPVEYOR_BUILD_FOLDER/tcp_wrappers_7.6" USE_WRAP=1
 
-  - sh: export APPVEYOR_SSH_BLOCK=true
-  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
-
   - cd $APPVEYOR_BUILD_FOLDER/openssl-3.3.2
-  - ./Configure --cross-compile-prefix=arm-linux-gnueabihf- --prefix=$APPVEYOR_BUILD_FOLDER/build linux-generic32
+  - ./Configure --prefix=$APPVEYOR_BUILD_FOLDER/build --cross-compile-prefix=arm-linux-gnueabihf- linux-elf
   - make
 
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
   - ./configure --help
-  - ./configure --disable-udev
+  - ./configure --prefix=$APPVEYOR_BUILD_FOLDER/build --host=arm-linux-gnueabihf --disable-udev
   - make
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf CFLAGS="-I$APPVEYOR_BUILD_FOLDER/openssl-3.3.2/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/openssl-3.3.2/lib"
+  - ./configure CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/lib" --prefix=$APPVEYOR_BUILD_FOLDER/build 
+                                                                                                             --host=arm-linux-gnueabihf
+                                                                                                             --disable-dbus
+                                                                                                             --with-tls=no
   - make
+
+on_finish:
+  - sh: export APPVEYOR_SSH_BLOCK=true
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
 test: off
 artifacts:
