@@ -2,7 +2,7 @@ version: 1.0.{build}
 image: Ubuntu2004
 
 environment:
-  APPVEYOR_SSH_KEY: <your ssh public key>
+  APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvVrxkmIikNbILEizwR57dPemc96K7BMDHmf82WicRxbprYY9H7DZJnYymC3IE+iru5jYBZ4f7T3jMIoEurNCpxh0b5xdMjf1JCX975ag2JcAuQYRQivzMrvNXTSSSn1GVp/AA8d6Tz0c403ERsx809OfTK5ntWacAkRYzn/0MiwWevnVlmjUH6eMaDRg3f1oU5PUxFETFWHOFpRJqXBsaLGAhNlcG1TfpXup/jzx/QqdEKBPNZmZLmrd0vDKWLKN4op/jqLA3tMQeDDaalUieJ1XGIy6++w3fWJC5DRb05IvCm8abgcAQard8mKQwP+eM7m4VqnY29LvEsmjyKo1Vw== rsa 2048-082321
 
 install:
   - sudo apt-get update
