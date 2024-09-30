@@ -59,13 +59,14 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
-  - ./configure CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/lib" --prefix=$APPVEYOR_BUILD_FOLDER/build 
+  - ./configure CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/lib" --prefix=$APPVEYOR_BUILD_FOLDER/build
                                                                                                              --host=arm-linux-gnueabihf
                                                                                                              --disable-shared
                                                                                                              --disable-dbus
                                                                                                              --with-tls=no
   - make
   - sudo make install
+  - sudo chown appveyor:appveyor $APPVEYOR_BUILD_FOLDER/build
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
