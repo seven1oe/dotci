@@ -33,7 +33,7 @@ build_script:
                 --with-tls=no
                 --with-cups-user=nobody
                 --with-cups-group=nogroup
-                --with-system-groups=$USER
+                --with-system-groups=root
                 --with-rcdir=$APPVEYOR_BUILD_FOLDER/etc
                 --with-icondir=$APPVEYOR_BUILD_FOLDER/usr/share/icons
                 --with-menudir=$APPVEYOR_BUILD_FOLDER/usr/share/applications
