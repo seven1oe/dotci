@@ -34,9 +34,9 @@ build_script:
                 --with-cups-user=nobody
                 --with-cups-group=nogroup
                 --with-system-groups=root
-                --with-rcdir=$APPVEYOR_BUILD_FOLDER/etc
-                --with-icondir=$APPVEYOR_BUILD_FOLDER/usr/share/icons
-                --with-menudir=$APPVEYOR_BUILD_FOLDER/usr/share/applications
+                --with-rcdir=$APPVEYOR_BUILD_FOLDER/build/etc
+                --with-icondir=$APPVEYOR_BUILD_FOLDER/build/usr/share/icons
+                --with-menudir=$APPVEYOR_BUILD_FOLDER/build/usr/share/applications
   - make
   - make STRIPPROG=arm-linux-gnueabihf-strip install
 
