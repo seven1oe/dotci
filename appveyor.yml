@@ -30,7 +30,6 @@ build_script:
                 --disable-shared
                 --disable-dbus
                 --with-tls=no
-                --without-rcdir
   - make
   - make STRIPPROG=arm-linux-gnueabihf-strip DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
