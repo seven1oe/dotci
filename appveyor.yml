@@ -26,9 +26,11 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf --without-tls
-                --libdir=/usr/lib          --disable-dbus
-                                           --disable-shared
+  - ./configure --host=arm-linux-gnueabihf
+                --libdir=/usr/lib
+                --disable-shared
+                --disable-dbus
+                --without-tls
   - make
   - make STRIPPROG=arm-linux-gnueabihf-strip DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
