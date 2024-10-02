@@ -26,7 +26,8 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
-  - ./configure CFLAGS="-DUSE_POSIX_SPAWN=0" --host=arm-linux-gnueabihf
+  - sed -i "s/USE_POSIX_SPAWN 1/USE_POSIX_SPAWN 0/" scheduler/process.c
+  - ./configure --host=arm-linux-gnueabihf
                 --libdir=/usr/lib
                 --disable-shared
                 --disable-dbus
