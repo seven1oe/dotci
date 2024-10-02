@@ -26,7 +26,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf
+  - ./configure CFLAGS="-DUSE_POSIX_SPAWN=0" --host=arm-linux-gnueabihf
                 --libdir=/usr/lib
                 --disable-shared
                 --disable-dbus
