@@ -29,7 +29,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf --disable-udev
+  - ./configure --host=arm-linux-gnueabihf --libdir=$APPVEYOR_BUILD_FOLDER/usr/local/lib --includedir=$APPVEYOR_BUILD_FOLDER/usr/local/include --disable-udev
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
@@ -44,9 +44,9 @@ build_script:
   - make
   - make STRIPPROG=arm-linux-gnueabihf-strip DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
-# on_finish:
-  # - sh: export APPVEYOR_SSH_BLOCK=true
-  # - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+on_finish:
+  - sh: export APPVEYOR_SSH_BLOCK=true
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
 test: off
 artifacts:
@@ -56,3 +56,5 @@ artifacts:
   name: build
 - path: cups-2.4.10
   name: cups-2.4.10
+- path: libusb-1.0.27
+  name: libusb-1.0.27
