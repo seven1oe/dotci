@@ -29,14 +29,14 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf --libdir=$APPVEYOR_BUILD_FOLDER/build/usr/local/lib --includedir=$APPVEYOR_BUILD_FOLDER/build/usr/local/include --disable-udev
+  - ./configure --prefix=$APPVEYOR_BUILD_FOLDER/build --host=arm-linux-gnueabihf --disable-udev
   - make
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+  - make install
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
   - sed -i "s/USE_POSIX_SPAWN 1/USE_POSIX_SPAWN 0/" scheduler/process.c
-  - ./configure PKG_CONFIG_PATH="/home/appveyor/projects/dotci/build/usr/local/lib/pkgconfig" --host=arm-linux-gnueabihf
+  - ./configure PKG_CONFIG_PATH="$APPVEYOR_BUILD_FOLDER/build/usr/local/lib/pkgconfig" --host=arm-linux-gnueabihf
                 --libdir=/usr/lib
                 --enable-libusb
                 --disable-dbus
