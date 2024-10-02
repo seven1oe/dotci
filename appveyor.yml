@@ -36,7 +36,7 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
   - sed -i "s/USE_POSIX_SPAWN 1/USE_POSIX_SPAWN 0/" scheduler/process.c
-  - ./configure CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/include" --host=arm-linux-gnueabihf
+  - ./configure PKG_CONFIG_PATH="/home/appveyor/projects/dotci/build/usr/local/lib/pkgconfig" --host=arm-linux-gnueabihf
                 --libdir=/usr/lib
                 --enable-libusb
                 --disable-dbus
