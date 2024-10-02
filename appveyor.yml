@@ -29,7 +29,6 @@ build_script:
   - sed -i "s/USE_POSIX_SPAWN 1/USE_POSIX_SPAWN 0/" scheduler/process.c
   - ./configure --host=arm-linux-gnueabihf
                 --libdir=/usr/lib
-                --disable-shared
                 --disable-dbus
                 --without-tls
   - make
