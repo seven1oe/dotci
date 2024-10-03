@@ -31,8 +31,9 @@ build_script:
   - ./configure --help
   - ./configure --host=arm-linux-gnueabihf --disable-udev
   - make
-  - sudo PATH=$PATH make install
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+
+  - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27 && sudo PATH=$PATH make install
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
