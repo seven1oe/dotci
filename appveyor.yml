@@ -39,12 +39,11 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
-  - sed -i "s/USE_POSIX_SPAWN 1/USE_POSIX_SPAWN 0/" scheduler/process.c
-  - ./configure --host=arm-linux-gnueabihf
-                --libdir=/usr/lib
-                --enable-libusb
-                --disable-dbus
-                --without-tls
+  - sed -i "s/USE_POSIX_SPAWN 1/USE_POSIX_SPAWN 0/" scheduler/process.c # TODO
+  - ./configure --host=arm-linux-gnueabihf --libdir=/usr/lib
+                                           --enable-libusb
+                                           --disable-dbus
+                                           --without-tls
   - make
   - make STRIPPROG=arm-linux-gnueabihf-strip DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
