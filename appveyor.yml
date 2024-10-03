@@ -30,6 +30,8 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
   - ./configure --help
   - ./configure --host=arm-linux-gnueabihf --disable-udev
+                                           --enable-log
+                                           --enable-debug-log
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
