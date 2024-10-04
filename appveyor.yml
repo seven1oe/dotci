@@ -42,9 +42,9 @@ build_script:
   - ./configure --help
   - sed -i "s/USE_POSIX_SPAWN 1/USE_POSIX_SPAWN 0/" scheduler/process.c # TODO
   - ./configure --host=arm-linux-gnueabihf                                     --libdir=/usr/lib
-                PKG_CONFIG_SYSROOT_DIR=$APPVEYOR_BUILD_FOLDER/build            --enable-libusb
-                PKG_CONFIG_PATH=$APPVEYOR_BUILD_FOLDER/build/usr/lib/pkgconfig --disable-dbus
-                                                                               --without-tls
+                PKG_CONFIG_ALLOW_SYSTEM_LIBS=1                                 --enable-libusb
+                PKG_CONFIG_SYSROOT_DIR=$APPVEYOR_BUILD_FOLDER/build            --disable-dbus
+                PKG_CONFIG_PATH=$APPVEYOR_BUILD_FOLDER/build/usr/lib/pkgconfig --without-tls
   - make
   - make STRIPPROG=arm-linux-gnueabihf-strip DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
