@@ -45,7 +45,7 @@ build_script:
                                            --enable-libusb
                                            --disable-dbus
                                            --without-tls
-  - make LDFLAGS="-L/usr/lib" # hit "/lib" first(SEARCH_DIR)
+  - make PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
   - make STRIPPROG=arm-linux-gnueabihf-strip DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 # on_finish:
