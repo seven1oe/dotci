@@ -34,11 +34,9 @@ build_script:
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
-  - export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1                                
-  # - export PKG_CONFIG_SYSROOT_DIR=$APPVEYOR_BUILD_FOLDER/build           
-  # - export PKG_CONFIG_PATH=$APPVEYOR_BUILD_FOLDER/build/usr/lib/pkgconfig
-  - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
-    && sudo PATH=$PATH make install
+  - export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
+  - export PKG_CONFIG_SYSROOT_DIR=$APPVEYOR_BUILD_FOLDER/build
+  - export PKG_CONFIG_PATH=$APPVEYOR_BUILD_FOLDER/build/usr/lib/pkgconfig
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
