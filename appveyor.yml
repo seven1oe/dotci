@@ -36,7 +36,6 @@ build_script:
   # install libs
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
     && sudo PATH=$PATH make install
-  - pkg-config --libs libusb-1.0
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
@@ -45,7 +44,8 @@ build_script:
                                            --enable-libusb
                                            --disable-dbus
                                            --without-tls
-  - make
+  - make LDFLAGS="-L/usr/lib" # ld's SEARCH_DIR is "/usr/local/lib" "/lib" "/usr/lib", and pkg-config
+                              # will trim "-L/usr/lib", so ld will hit libusb in "/lib" which is x86
   - make STRIPPROG=arm-linux-gnueabihf-strip DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 # on_finish:
