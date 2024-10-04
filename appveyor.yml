@@ -36,7 +36,7 @@ build_script:
 
   - export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
   - export PKG_CONFIG_SYSROOT_DIR=$APPVEYOR_BUILD_FOLDER/build
-  - export PKG_CONFIG_PATH=$APPVEYOR_BUILD_FOLDER/build/usr/lib/pkgconfig # append, PKG_CONFIG_LIBDIR for replace
+  - export PKG_CONFIG_PATH=$APPVEYOR_BUILD_FOLDER/build/usr/lib/pkgconfig # PKG_CONFIG_LIBDIR==overwrite
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-2.4.10
   - ./configure --help
