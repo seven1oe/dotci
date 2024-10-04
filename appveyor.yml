@@ -29,7 +29,8 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf --disable-udev
+  - ./configure --host=arm-linux-gnueabihf --prefix=/usr
+                                           --disable-udev
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
@@ -44,8 +45,7 @@ build_script:
                                            --enable-libusb
                                            --disable-dbus
                                            --without-tls
-  - make LDFLAGS="-L/usr/lib" # ld's SEARCH_DIR is "/usr/local/lib" "/lib" "/usr/lib", and pkg-config
-                              # will trim "-L/usr/lib", so ld will hit libusb in "/lib" which is x86
+  - make LDFLAGS="-L/usr/lib" # hit "/lib" first(SEARCH_DIR)
   - make STRIPPROG=arm-linux-gnueabihf-strip DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 # on_finish:
