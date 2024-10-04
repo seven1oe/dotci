@@ -47,7 +47,7 @@ build_script:
                                            --disable-dbus
                                            --without-tls
   - make
-  - make STRIPPROG=arm-linux-gnueabihf-strip DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build STRIPPROG=arm-linux-gnueabihf-strip install
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
