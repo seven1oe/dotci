@@ -56,13 +56,13 @@ build_script:
 
   - cd lcms2-2.16
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf 
+  - ./configure --host=arm-linux-gnueabihf
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
   - cd $APPVEYOR_BUILD_FOLDER/cups-filters-2.0.1
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf --with-cups-config=$APPVEYOR_BUILD_FOLDER/build/usr/bin/cups-config
+  - ./configure --host=arm-linux-gnueabihf --with-cups-config=$APPVEYOR_BUILD_FOLDER/build/usr/bin/cups-config --without-jpeg --without-png --without-tiff --disable-exif
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
