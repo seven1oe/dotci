@@ -21,11 +21,20 @@ before_build:
   - wget https://github.com/OpenPrinting/cups/releases/download/v2.4.10/cups-2.4.10-source.tar.gz
   - tar -xzf cups-2.4.10-source.tar.gz
 
+  - wget https://github.com/OpenPrinting/cups-filters/releases/download/2.0.1/cups-filters-2.0.1.tar.gz
+  - tar -xzf cups-filters-2.0.1.tar.gz
+
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
 
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - make CROSS=arm-linux-gnueabihf-
+
+  - cd $APPVEYOR_BUILD_FOLDER/cups-filters-2.0.1
+  - ./configure --help
+  - ./configure --host=arm-linux-gnueabihf
+  - make
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
   - ./configure --help
