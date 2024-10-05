@@ -30,12 +30,6 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - make CROSS=arm-linux-gnueabihf-
 
-  - cd $APPVEYOR_BUILD_FOLDER/cups-filters-2.0.1
-  - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf
-  - make
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
-
   - cd $APPVEYOR_BUILD_FOLDER/libusb-1.0.27
   - ./configure --help
   - ./configure --host=arm-linux-gnueabihf --prefix=/usr
@@ -56,6 +50,12 @@ build_script:
                                            --without-tls
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build STRIPPROG=arm-linux-gnueabihf-strip install
+
+  - cd $APPVEYOR_BUILD_FOLDER/cups-filters-2.0.1
+  - ./configure --help
+  - ./configure --host=arm-linux-gnueabihf --with-cups-config=$APPVEYOR_BUILD_FOLDER/build/usr/bin
+  - make
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
