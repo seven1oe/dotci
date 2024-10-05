@@ -54,7 +54,7 @@ build_script:
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build STRIPPROG=arm-linux-gnueabihf-strip install
 
-  - cd lcms2-2.16
+  - cd $APPVEYOR_BUILD_FOLDER/lcms2-2.16
   - ./configure --help
   - ./configure --host=arm-linux-gnueabihf
   - make
