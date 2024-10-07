@@ -69,7 +69,5 @@ on_finish:
 
 test: off
 artifacts:
-- path: p910nd-0.97
-  name: p910nd-0.97
 - path: build
   name: build
