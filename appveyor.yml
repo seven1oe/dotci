@@ -8,10 +8,12 @@ install:
   - sudo apt-get update
   - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc
 
-before_build:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/arm-linux-gnueabihf/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
   - tar -xJf gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
 
+  - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
+
+before_build:
   - wget https://github.com/kenyapcomau/p910nd/archive/0.97/p910nd-0.97.tar.gz
   - tar -xzf p910nd-0.97.tar.gz
 
@@ -22,9 +24,7 @@ before_build:
   - tar -xzf cups-2.4.10-source.tar.gz
 
   - wget https://downloads.sourceforge.net/gimp-print/gutenprint-5.3.4.tar.xz
-  - tar -xzf cups-2.4.10-source.tar.gz
-
-  - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
+  - tar -xJf gutenprint-5.3.4.tar.xz
 
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
@@ -50,6 +50,12 @@ build_script:
                                            --without-tls
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build STRIPPROG=arm-linux-gnueabihf-strip install
+
+  - cd $APPVEYOR_BUILD_FOLDER/gutenprint-5.3.4
+  - ./configure --help
+  - ./configure --host=arm-linux-gnueabihf
+  - make
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 on_finish:
   - sh: export APPVEYOR_SSH_BLOCK=true
