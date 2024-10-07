@@ -57,15 +57,15 @@ build_script:
   - ./configure --help
   - ./configure --host=arm-linux-gnueabihf LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib" --prefix=/usr
                                                                                             --disable-cups-ppds
-                                                                                            --with-cups=$APPVEYOR_BUILD_FOLDER/build/usr
+                                                                                            --with-cups=/usr
   - sed -i "s#\./extract-strings#echo#" src/xml/Makefile
   - sed -i "s#\./check_duplicate_printers\.test##" src/xml/printers/Makefile
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
-on_finish:
-  - sh: export APPVEYOR_SSH_BLOCK=true
-  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+# on_finish:
+  # - sh: export APPVEYOR_SSH_BLOCK=true
+  # - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
 test: off
 artifacts:
