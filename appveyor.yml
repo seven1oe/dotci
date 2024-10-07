@@ -71,7 +71,3 @@ artifacts:
   name: p910nd-0.97
 - path: build
   name: build
-- path: cups-2.4.10
-  name: cups-2.4.10
-- path: libusb-1.0.27
-  name: libusb-1.0.27
