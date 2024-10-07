@@ -30,7 +30,7 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - sed -i "s#\$(INSTALL) \$(INITSCRIPT) \$(DESTDIR)\$(SCRIPTDIR)/\$(PROG)##" Makefile
   - sed -i "s#\$(INSTALL) -m 644 \$(CONFIG) \$(DESTDIR)\$(CONFIGDIR)/\$(PROG)##" Makefile
-  - make CROSS=arm-linux-gnueabihf- install
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build CROSS=arm-linux-gnueabihf- install
 
   - export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
   - export PKG_CONFIG_SYSROOT_DIR=$APPVEYOR_BUILD_FOLDER/build
