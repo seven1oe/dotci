@@ -53,7 +53,8 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/gutenprint-5.3.4
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf
+  - ./configure --host=arm-linux-gnueabihf LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib" --prefix=/usr
+                                                                                            --with-cups=$APPVEYOR_BUILD_FOLDER/build/usr 
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
