@@ -56,8 +56,7 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/gutenprint-5.3.4
   - ./configure --help
   - ./configure --host=arm-linux-gnueabihf LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib"    --prefix=/usr
-                                           CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" --sysconfdir=/etc
-                                                                                               --with-cups=/usr
+                                           CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" --with-cups=/usr
                                                                                                --disable-cups-ppds
   - sed -i "s#\./extract-strings#echo#" src/xml/Makefile
   - sed -i "s#\./check_duplicate_printers\.test##" src/xml/printers/Makefile
