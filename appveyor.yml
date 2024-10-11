@@ -68,8 +68,9 @@ build_script:
   - make V=1
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
-  - cd $APPVEYOR_BUILD_FOLDER/linux-capt-drv-v271-uken/Src/cndrvcups-capt-2.71
-  - cd $APPVEYOR_BUILD_FOLDER/linux-capt-drv-v271-uken/Src/cndrvcups-common-3.21
+  - cd $APPVEYOR_BUILD_FOLDER/cndrvcups-capt-2.71
+
+  - cd $APPVEYOR_BUILD_FOLDER/cndrvcups-common-3.21
 
 on_finish:
   - sh: export APPVEYOR_SSH_BLOCK=true
