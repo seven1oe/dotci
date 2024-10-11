@@ -72,11 +72,13 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/cndrvcups-common-3.21
 
-on_finish:
-  - sh: export APPVEYOR_SSH_BLOCK=true
-  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+# on_finish:
+  # - sh: export APPVEYOR_SSH_BLOCK=true
+  # - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
 test: off
 artifacts:
 - path: build
   name: build
+- path: gutenprint-5.3.4
+  name: gutenprint-5.3.4
