@@ -71,9 +71,9 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER/linux-capt-drv-v271-uken/Src/cndrvcups-capt-2.71
   - cd $APPVEYOR_BUILD_FOLDER/linux-capt-drv-v271-uken/Src/cndrvcups-common-3.21
 
-# on_finish:
-  # - sh: export APPVEYOR_SSH_BLOCK=true
-  # - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+on_finish:
+  - sh: export APPVEYOR_SSH_BLOCK=true
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
 test: off
 artifacts:
