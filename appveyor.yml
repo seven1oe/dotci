@@ -26,6 +26,9 @@ before_build:
   - wget https://downloads.sourceforge.net/gimp-print/gutenprint-5.3.4.tar.xz
   - tar -xJf gutenprint-5.3.4.tar.xz
 
+  - wget http://gdlp01.c-wss.com/gds/6/0100004596/05/linux-capt-drv-v271-uken.tar.gz
+  - tar -xJf linux-capt-drv-v271-uken.tar.gz
+
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - sed -i 's#$(INSTALL) $(INITSCRIPT) $(DESTDIR)$(SCRIPTDIR)/$(PROG)##' Makefile
@@ -61,7 +64,9 @@ build_script:
   - sed -i "s#\./extract-strings#echo#" src/xml/Makefile
   - sed -i "s#\./check_duplicate_printers\.test##" src/xml/printers/Makefile
   - make
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build V=1 install
+
+  - cd $APPVEYOR_BUILD_FOLDER/linux-capt-drv-v271-uken
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
