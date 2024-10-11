@@ -65,8 +65,8 @@ build_script:
                                                                                                --disable-cups-ppds
   - sed -i "s#\./extract-strings#echo#" src/xml/Makefile
   - sed -i "s#\./check_duplicate_printers\.test##" src/xml/printers/Makefile
-  - make
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build -n install
+  - make V=1
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-capt-drv-v271-uken/Src/cndrvcups-capt-2.71
   - cd $APPVEYOR_BUILD_FOLDER/linux-capt-drv-v271-uken/Src/cndrvcups-common-3.21
