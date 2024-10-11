@@ -26,7 +26,7 @@ before_build:
   - wget https://downloads.sourceforge.net/gimp-print/gutenprint-5.3.4.tar.xz
   - tar -xJf gutenprint-5.3.4.tar.xz
 
-  - wget http://gdlp01.c-wss.com/gds/6/0100004596/05/linux-capt-drv-v271-uken.tar.gz
+  - wget https://pdisp01.c-wss.com/gdl/WWUFORedirectTarget.do?id=MDEwMDAwNDU5NjA1&cmp=ACB&lang=EN
   - tar -xJf linux-capt-drv-v271-uken.tar.gz
 
 build_script:
