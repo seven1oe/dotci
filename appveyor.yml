@@ -8,7 +8,7 @@ environment:
 
 install:
   - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
-  - msys64\msys2_shell.cmd -defterm -no-start -c true
+  - msys64\msys2_shell.cmd -defterm -no-start -c "mkdir -p $(cygpath -u %APPVEYOR_BUILD_FOLDER%)/pkg"
 
 build_script:
   - '%BASH% -lc "pacman -Sy --noconfirm tar"'
