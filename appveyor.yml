@@ -26,4 +26,4 @@ after_build:
 
 test: off
 artifacts:
-- path: '%ROOT%\home\%USERNAME%\usr'
+- path: msys64\home\%USERNAME%\usr
