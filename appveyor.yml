@@ -17,8 +17,8 @@ build_script:
   - '%BASH% -lc "pacman -Sw --noconfirm u-boot-tools libopenssl"'
 
   - '%BASH% -lc "echo \"%EXCLUDE%\" | tr \" \" \"\n\" > exclude"'
-  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -X exclude -C $(cygpath -u \"%APPVEYOR_BUILD_FOLDER%\")/pkg -k -I zstd -xf || true"'
   - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -X exclude -C $(cygpath -u \"%APPVEYOR_BUILD_FOLDER%\")/pkg -k -xJf || true"'
+  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -X exclude -C $(cygpath -u \"%APPVEYOR_BUILD_FOLDER%\")/pkg -k -I zstd -xf || true"'
 
 after_build:
   - xcopy %ROOT%\usr\bin\msys-2.0.dll pkg\usr\bin\
