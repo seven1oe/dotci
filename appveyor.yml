@@ -14,7 +14,7 @@ build_script:
   - '%BASH% -lc "pacman -Sy --noconfirm tar"'
   - '%BASH% -lc "pacman -Sc --noconfirm --clean"'
 
-  - '%BASH% -lc "pacman -Sw --noconfirm u-boot-tools"'
+  - '%BASH% -lc "pacman -Sw --noconfirm u-boot-tools libopenssl"'
 
   - '%BASH% -lc "echo $(cygpath -u %APPVEYOR_BUILD_FOLDER%)/pkg"'
   - '%BASH% -lc "echo \"%EXCLUDE%\" | tr \" \" \"\n\" > exclude"'
