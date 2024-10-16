@@ -12,7 +12,7 @@ install:
 
 build_script:
   - '%BASH% -lc "pacman -Sy --noconfirm tar"'
-  - '%BASH% -lc "pacman -Sc --clean"'
+  - '%BASH% -lc "pacman -Sc --noconfirm --clean"'
 
   - '%BASH% -lc "pacman -Sw --noconfirm u-boot-tools"'
 
