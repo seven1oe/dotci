@@ -8,7 +8,7 @@ environment:
 
 install:
   - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
-  - msys64\msys2_shell.cmd -defterm -no-start -c "mkdir -p $(cygpath -u %APPVEYOR_BUILD_FOLDER%)/pkg"
+  - msys64\msys2_shell.cmd -defterm -no-start -c "mkdir -p $(cygpath -u \"%APPVEYOR_BUILD_FOLDER%\")/pkg"
 
 build_script:
   - '%BASH% -lc "pacman -Sy --noconfirm tar"'
@@ -18,8 +18,8 @@ build_script:
 
   - '%BASH% -lc "echo $(cygpath -u \"%APPVEYOR_BUILD_FOLDER%\")/pkg"'
   - '%BASH% -lc "echo \"%EXCLUDE%\" | tr \" \" \"\n\" > exclude"'
-  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -X exclude -C $(cygpath -u %APPVEYOR_BUILD_FOLDER%)/pkg -k -I zstd -xf || true"'
-  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -X exclude -C $(cygpath -u %APPVEYOR_BUILD_FOLDER%)/pkg -k -xJf || true"'
+  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -X exclude -C $(cygpath -u \"%APPVEYOR_BUILD_FOLDER%\")/pkg -k -I zstd -xf || true"'
+  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -X exclude -C $(cygpath -u \"%APPVEYOR_BUILD_FOLDER%\")/pkg -k -xJf || true"'
 
 after_build:
   - xcopy %ROOT%\usr\bin\msys-2.0.dll pkg\
