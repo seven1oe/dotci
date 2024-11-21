@@ -6,19 +6,16 @@ install:
   - sudo apt-get install -y libarchive-tools
 
 before_build:
-  - |-
-    cat > INCLUDE << EOF
-    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/dll/
-    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/pylib/
-    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/share/gdb/
-    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/libpython2.7.dll
-    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gdb.exe
-    EOF
+  - export INCLUDE="--include gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/dll/
+                    --include gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/pylib/
+                    --include gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/share/gdb/
+                    --include gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/libpython2.7.dll
+                    --include gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gdb.exe"
 
 build_script:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/arm-linux-gnueabihf/gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz
   - xz -d -c gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz |
-    bsdtar --format gnutar $(sed -r 's/(.+)/--include \1/' INCLUDE | tr '\n' ' ') -cJf gdb-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz @-
+    bsdtar --format gnutar $INCLUDE -cJf gdb-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz @-
 
 test: off
 artifacts:
