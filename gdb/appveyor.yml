@@ -1,0 +1,26 @@
+version: 1.0.{build}
+image: Ubuntu2004
+
+install:
+  - sudo apt-get update --allow-releaseinfo-change
+  - sudo apt-get install -y libarchive-tools
+
+before_build:
+  - |-
+    cat > INCLUDE << EOF
+    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/dll/
+    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/pylib/
+    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/share/gdb/
+    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/libpython2.7.dll
+    gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gdb.exe
+    EOF
+
+build_script:
+  - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/arm-linux-gnueabihf/gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz
+  - xz -d -c gcc-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz |
+    bsdtar --format gnutar $(sed -r 's/(.+)/--include \1/' INCLUDE | tr '\n' ' ') -cJf gdb-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz @-
+
+test: off
+artifacts:
+- path: gdb-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz
+  name: gdb-linaro-5.3.1-2016.05-i686-mingw32_arm-linux-gnueabihf.tar.xz
