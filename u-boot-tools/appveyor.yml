@@ -1,0 +1,32 @@
+version: 1.0.{build}
+
+environment:
+  ROOT: '%APPVEYOR_BUILD_FOLDER%\msys64'
+  BASH: '%ROOT%\usr\bin\bash.exe'
+
+  PACKAGES: u-boot-tools libopenssl
+  ARTIFACT: u-boot-tools
+
+install:
+  - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
+  - msys64\msys2_shell.cmd -defterm -no-start -c true
+
+build_script:
+  - '%BASH% -lc "pacman -Sy --noconfirm tar"'
+  - '%BASH% -lc "pacman -Sc --noconfirm --clean"'
+
+  - '%BASH% -lc "pacman -Sw --noconfirm $PACKAGES"'
+
+  - '%BASH% -lc "echo -e ".MTREE\n.PKGINFO\n.BUILDINFO\n" > exclude"'
+  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.xz | xargs -n1 tar -X exclude -k -xJf || true"'
+  - '%BASH% -lc "ls /var/cache/pacman/pkg/*.tar.zst | xargs -n1 tar -X exclude -k -I zstd -xf || true"'
+
+after_build:
+  - mkdir pkg
+  - xcopy /S /E %ROOT%\home\%USERNAME%\usr pkg\
+  - xcopy /S /E %ROOT%\usr\bin\msys-2.0.dll pkg\bin\
+
+test: off
+artifacts:
+- path: pkg
+  name: '%ARTIFACT%'
