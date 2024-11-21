@@ -17,7 +17,10 @@ before_build:
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25
 
-  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+  - export ARCH=arm64
+  - export CROSS_COMPILE=aarch64-linux-gnu-
+
+  - make defconfig
   # fix
   - sed -i "s/CONFIG_JUMP_LABEL=y/CONFIG_JUMP_LABEL=n/" .config
   - sed -i "s/# CONFIG_MODULE_SIG is not set/CONFIG_MODULE_SIG=y/" .config
@@ -25,20 +28,18 @@ build_script:
   - sed -i "s/CONFIG_PREEMPT=y/CONFIG_PREEMPT=n/" .config
   - sed -i "s/CONFIG_UNINLINE_SPIN_UNLOCK=y/CONFIG_UNINLINE_SPIN_UNLOCK=n/" .config
 
-  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KCONFIG_ALLCONFIG=.config allnoconfig
-  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- prepare
+  - make KCONFIG_ALLCONFIG=.config allnoconfig
+  - make prepare
 
   - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
-  - make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- scripts
+  - make scripts
 
   - sed -i "s/\"lp%d\"/\"lp\"/" drivers/usb/class/usblp.c
-  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m modules
-  - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- M=drivers/usb/class CONFIG_USB_PRINTER=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
+  - make V=1 M=drivers/usb/class CONFIG_USB_PRINTER=m modules
+  - make V=1 M=drivers/usb/class CONFIG_USB_PRINTER=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
-  # - cd $APPVEYOR_BUILD_FOLDER/kmod
-
-  # - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD modules
-  # - make V=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C $APPVEYOR_BUILD_FOLDER/linux-4.1.25 M=$PWD INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
+  # - make V=1 M=$APPVEYOR_BUILD_FOLDER/kmod modules
+  # - make V=1 M=$APPVEYOR_BUILD_FOLDER/kmod INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
 test: off
 artifacts:
