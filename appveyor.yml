@@ -12,6 +12,9 @@ before_build:
   - wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.25.tar.xz
   - tar -xJf linux-4.1.25.tar.xz
 
+  - wget https://www.incentivespro.com/downloads/usb-redirector-linux-arm-gnueabihf.tar.gz
+  - tar -xzf usb-redirector-linux-arm-gnueabihf.tar.gz
+
   - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin:$PATH
 
 build_script:
@@ -31,8 +34,8 @@ build_script:
   - make KCONFIG_ALLCONFIG=.config allnoconfig
   - make prepare
 
-  # - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
-  - make CONFIG_DTC=n scripts
+  - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
+  - make scripts
 
   - sed -i "s/\"lp%d\"/\"lp\"/" drivers/usb/class/usblp.c
   - make V=1 M=drivers/usb/class CONFIG_USB_PRINTER=m modules
@@ -40,6 +43,10 @@ build_script:
 
   - make V=1 M=drivers/usb/usbip CONFIG_USBIP_CORE=m CONFIG_USBIP_HOST=m modules
   - make V=1 M=drivers/usb/usbip CONFIG_USBIP_CORE=m CONFIG_USBIP_HOST=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
+
+  - ls $APPVEYOR_BUILD_FOLDER/usb-redirector-linux-arm-gnueabihf/files/modules/src/tusbd
+  - make V=1 M=$APPVEYOR_BUILD_FOLDER/usb-redirector-linux-arm-gnueabihf/files/modules/src/tusbd modules
+  - make V=1 M=$APPVEYOR_BUILD_FOLDER/usb-redirector-linux-arm-gnueabihf/files/modules/src/tusbd INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
   # - make V=1 M=$APPVEYOR_BUILD_FOLDER/kmod modules
   # - make V=1 M=$APPVEYOR_BUILD_FOLDER/kmod INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
