@@ -32,8 +32,8 @@ build_script:
   - make KCONFIG_ALLCONFIG=.config allnoconfig
   - make prepare
 
-  - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
-  - make scripts
+  # - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
+  - make CONFIG_DTC=n scripts
 
   - sed -i "s/\"lp%d\"/\"lp\"/" drivers/usb/class/usblp.c
   - make V=1 M=drivers/usb/class CONFIG_USB_PRINTER=m modules
