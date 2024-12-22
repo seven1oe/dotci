@@ -8,20 +8,27 @@ install:
   - sudo apt-get update --allow-releaseinfo-change
   - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc
 
+before_build:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/arm-linux-gnueabihf/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
   - tar -xJf gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
 
-  - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
-
-before_build:
   - wget https://github.com/kenyapcomau/p910nd/archive/0.97/p910nd-0.97.tar.gz
   - tar -xzf p910nd-0.97.tar.gz
+
+  - wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.25.tar.xz
+  - tar -xJf linux-4.1.25.tar.xz
+
+  - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
 
 build_script:
   - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
   - sed -i 's#$(INSTALL) $(INITSCRIPT) $(DESTDIR)$(SCRIPTDIR)/$(PROG)##' Makefile
   - sed -i 's#$(INSTALL) -m 644 $(CONFIG) $(DESTDIR)$(CONFIGDIR)/$(PROG)##' Makefile
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build CROSS=arm-linux-gnueabihf- install
+
+  - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
+  - ./autogen.sh
+  - ./configure --help
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
