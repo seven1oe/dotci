@@ -30,12 +30,14 @@ build_script:
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build CROSS=arm-linux-gnueabihf- install
 
   - cd $APPVEYOR_BUILD_FOLDER/libudev-zero-1.0.3
-  - make
-  - make CC=arm-linux-gnueabihf-gcc AR=arm-linux-gnueabihf-ar DESTDIR=$APPVEYOR_BUILD_FOLDER/build PREFIX=/usr install
+  - make CC=arm-linux-gnueabihf-gcc AR=arm-linux-gnueabihf-ar
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build PREFIX=/usr install
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
   - ./configure --host=arm-linux-gnueabihf --with-tcp-wrappers=no CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib"
+  - make
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 on_finish:
   - sh: export APPVEYOR_SSH_BLOCK=true
