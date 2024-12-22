@@ -31,7 +31,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/libudev-zero-1.0.3
   - make
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build PREFIX=/usr install
+  - make CC=arm-linux-gnueabihf-gcc AR=arm-linux-gnueabihf-ar DESTDIR=$APPVEYOR_BUILD_FOLDER/build PREFIX=/usr install
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
