@@ -34,7 +34,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
-  - ./configure --help
+  - ./configure --with-tcp-wrappers=no 
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
