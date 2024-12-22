@@ -16,7 +16,7 @@ before_build:
   - tar -xzf p910nd-0.97.tar.gz
 
   - wget https://github.com/illiliti/libudev-zero/archive/1.0.3/libudev-zero-1.0.3.tar.gz
-  - tar -xzf p910nd-0.97.tar.gz
+  - tar -xzf libudev-zero-1.0.3.tar.gz
 
   - wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.25.tar.xz
   - tar -xJf linux-4.1.25.tar.xz
