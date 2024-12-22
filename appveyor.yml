@@ -31,11 +31,11 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/libudev-zero-1.0.3
   - make
-  - make PREFIX=/usr install
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build PREFIX=/usr install
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
-  - ./configure --host=arm-linux-gnueabihf --with-tcp-wrappers=no 
+  - ./configure --host=arm-linux-gnueabihf --with-tcp-wrappers=no CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib"
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
