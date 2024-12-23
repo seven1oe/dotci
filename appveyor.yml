@@ -40,7 +40,7 @@ build_script:
                                             --disable-shared
                                             --with-tcp-wrappers=no
   - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib" || true
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+  # - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
