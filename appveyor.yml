@@ -39,7 +39,7 @@ build_script:
                 ac_cv_lib_udev_udev_new=yes --prefix=/usr
                                             --with-tcp-wrappers=no
   - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LIBS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a" || true
-  # - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install || true
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
