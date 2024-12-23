@@ -40,8 +40,8 @@ build_script:
                                                                     --with-tcp-wrappers=no
   - sed -i "s#-ludev#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#" src/Makefile
   - sed -i 's#LDADD = $(top_builddir)/libsrc/libusbip.la#LDADD = $(top_builddir)/libsrc/libusbip.a#' src/Makefile
-  - make
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+  # - make 
+  # - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 on_finish:
   - sh: export APPVEYOR_SSH_BLOCK=true
@@ -51,3 +51,5 @@ test: off
 artifacts:
 - path: build
   name: build
+- path: linux-4.1.25/tools/usb/usbip
+  name: usbip
