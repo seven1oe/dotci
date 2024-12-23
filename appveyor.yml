@@ -38,7 +38,7 @@ build_script:
   - ./configure CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" --host=arm-linux-gnueabihf
                 LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib"    --prefix=/usr
                                                                     --with-tcp-wrappers=no
-  - sed -i 's#-ludev#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#' src/Makefile
+  - sed -i "s#-ludev#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#" src/Makefile
   - sed -i 's#LDADD = $(top_builddir)/libsrc/libusbip.la#LDADD = $(top_builddir)/libsrc/libusbip.a#' src/Makefile
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
