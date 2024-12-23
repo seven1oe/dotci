@@ -40,7 +40,7 @@ build_script:
   - ./configure --host=arm-linux-gnueabihf
                 --prefix=/usr
                 --with-tcp-wrappers=no
-  - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib"
+  - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a"
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 # on_finish:
