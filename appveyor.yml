@@ -35,10 +35,9 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
-  - ./configure --host=arm-linux-gnueabihf
+  - ./configure --host=arm-linux-gnueabihf CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include -L$APPVEYOR_BUILD_FOLDER/build/usr/lib"
                 --prefix=/usr
                 --with-tcp-wrappers=no
-                CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include -L$APPVEYOR_BUILD_FOLDER/build/usr/lib"
   - sed -i "s#-ludev#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#" src/Makefile
   - sed -i 's#LDADD = $(top_builddir)/libsrc/libusbip.la#LDADD = $(top_builddir)/libsrc/.libs/libusbip.a#' src/Makefile
   - make
