@@ -40,8 +40,8 @@ build_script:
                 LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib"    --prefix=/usr
                                                                     --with-tcp-wrappers=no
   - sed -i 's#LDADD = $(top_builddir)/libsrc/libusbip.la#LDADD = $(top_builddir)/libsrc/.libs/libusbip.a#' src/Makefile
-  - make || true
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+  # - make || true
+  # - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
