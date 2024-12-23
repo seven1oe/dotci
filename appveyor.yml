@@ -34,7 +34,7 @@ build_script:
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build PREFIX=/usr install
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
-  - sed -i 's#-ludev#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#' configure.ac
+  - sed -i "s#-ludev#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#" configure.ac
   - ./autogen.sh
   - ./configure CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" --host=arm-linux-gnueabihf
                 LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib"    --prefix=/usr
