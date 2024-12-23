@@ -35,7 +35,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
-  - ./configure --host=arm-linux-gnueabihf --prefix=/usr --with-tcp-wrappers=no CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib"
+  - ./configure --host=arm-linux-gnueabihf --prefix=/usr --with-tcp-wrappers=no CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib -static"
   - make
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
