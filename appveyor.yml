@@ -34,12 +34,12 @@ build_script:
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build PREFIX=/usr install
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
-  - sed -i "s#AC_MSG_ERROR([Missing udev library!])#AC_MSG_WARN([Missing udev library!])#" configure.ac
-  - sed -i "s#AC_MSG_ERROR([Missing /usr/include/libudev.h])#AC_MSG_WARN([Missing /usr/include/libudev.h])#" configure.ac
   - ./autogen.sh
   - ./configure --host=arm-linux-gnueabihf
                 --prefix=/usr
                 --with-tcp-wrappers=no
+                ac_cv_header_libudev_h=yes
+                ac_cv_lib_udev_udev_new=yes
   - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a"
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
