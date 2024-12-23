@@ -38,6 +38,7 @@ build_script:
   - ./autogen.sh
   - ./configure CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" --host=arm-linux-gnueabihf
                 LDFLAGS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib"    --prefix=/usr
+                                                                    --disable-shared
                                                                     --with-tcp-wrappers=no
   - make || true
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
