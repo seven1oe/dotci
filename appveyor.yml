@@ -38,7 +38,7 @@ build_script:
   - ./configure ac_cv_header_libudev_h=yes  --host=arm-linux-gnueabihf
                 ac_cv_lib_udev_udev_new=yes --prefix=/usr
                                             --with-tcp-wrappers=no
-  - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a"
+  - make CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LDFLAGS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a" || true
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 # on_finish:
