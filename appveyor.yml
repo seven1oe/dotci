@@ -35,11 +35,11 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
-  - ./configure ac_cv_header_libudev_h=yes                                 --host=arm-linux-gnueabihf
-                ac_cv_lib_udev_udev_new=yes                                --prefix=/usr
-                LIBS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib -Wl,-Bstatic" --disable-shared
-                CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include"        --with-tcp-wrappers=no
-  - make V=1 || true
+  - ./configure ac_cv_header_libudev_h=yes  --host=arm-linux-gnueabihf
+                ac_cv_lib_udev_udev_new=yes --prefix=/usr
+                                            --disable-shared
+                                            --with-tcp-wrappers=no
+  - make V=1 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LIBS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a" || true
   - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install || true
 
 # on_finish:
