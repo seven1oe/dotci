@@ -39,7 +39,7 @@ build_script:
                 ac_cv_lib_udev_udev_new=yes                         --prefix=/usr
                 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" --disable-shared
                                                                     --with-tcp-wrappers=no
-  - make V=1 LIBS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib -static" || true
+  - make V=1 LIBS="-L$APPVEYOR_BUILD_FOLDER/build/usr/lib -Wl,-static" || true
   - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install || true
 
 # on_finish:
