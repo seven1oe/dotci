@@ -35,6 +35,7 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
+  - ./configure --help
   - ./configure ac_cv_header_libudev_h=yes  --host=arm-linux-gnueabihf
                 ac_cv_lib_udev_udev_new=yes --prefix=/usr
                                             --disable-shared
