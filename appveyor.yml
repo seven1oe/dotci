@@ -39,8 +39,8 @@ build_script:
   - ./configure ac_cv_header_libudev_h=yes  --host=arm-linux-gnueabihf
                 ac_cv_lib_udev_udev_new=yes --prefix=/usr
                                             --with-tcp-wrappers=no
-  - sed -i "s#\$(LIBS)#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#" src/Makefile
   - sed -i "s#\$(LIBS)#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#" libsrc/Makefile
+  - sed -i "s#\$(LIBS)#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#" src/Makefile
   - sed -i 's#$(LDADD)#$(top_builddir)/libsrc/.libs/libusbip.a#' src/Makefile
   - make V=1 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" || true
   - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install || true
