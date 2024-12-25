@@ -33,9 +33,9 @@ build_script:
   - ./configure --help
   - ./configure --host=arm-linux-gnueabihf --disable-selinux 
                                            --disable-blkid
-                                           --bindir=/usr/sbin # avoid ln
   - make V=1
   - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build -C src/udev uninstall-hook
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
