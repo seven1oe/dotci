@@ -35,7 +35,7 @@ build_script:
                                            --disable-blkid
   - make V=1
   - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
-  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build -C src/udev uninstall-hook # ln wrong udevadm
+  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build -C src/udev uninstall-hook # rm -Rf $(DESTDIR)$(sbindir)/udevadm
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
