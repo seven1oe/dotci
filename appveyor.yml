@@ -35,15 +35,12 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
-  - ./configure --help
   - ./configure ac_cv_header_libudev_h=yes  --host=arm-linux-gnueabihf
                 ac_cv_lib_udev_udev_new=yes --prefix=/usr
-                                            --with-tcp-wrappers=no
-  - sed -i "s#\$(LIBS)#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#" libsrc/Makefile
-  - sed -i "s#\$(LIBS)#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#" src/Makefile
-  - sed -i 's#$(LDADD)#$(top_builddir)/libsrc/.libs/libusbip.a#' src/Makefile
-  - make V=1 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" || true
-  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install || true
+                                            --disable-shared
+                                            --without-tcp-wrappers
+  - make V=1 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LIBS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a"
+  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 # on_finish:
   # - sh: export APPVEYOR_SSH_BLOCK=true
