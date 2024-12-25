@@ -15,8 +15,8 @@ before_build:
   - wget https://github.com/kenyapcomau/p910nd/archive/0.97/p910nd-0.97.tar.gz
   - tar -xzf p910nd-0.97.tar.gz
 
-  - wget https://github.com/illiliti/libudev-zero/archive/1.0.3/libudev-zero-1.0.3.tar.gz
-  - tar -xzf libudev-zero-1.0.3.tar.gz
+  - wget https://github.com/eudev-project/eudev/releases/download/v3.2.14/eudev-3.2.14.tar.gz
+  - tar -xzf eudev-3.2.14.tar.gz
 
   - wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.25.tar.xz
   - tar -xJf linux-4.1.25.tar.xz
@@ -29,9 +29,10 @@ build_script:
   - sed -i 's#$(INSTALL) -m 644 $(CONFIG) $(DESTDIR)$(CONFIGDIR)/$(PROG)##' Makefile
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build CROSS=arm-linux-gnueabihf- install
 
-  - cd $APPVEYOR_BUILD_FOLDER/libudev-zero-1.0.3
-  - make CC=arm-linux-gnueabihf-gcc AR=arm-linux-gnueabihf-ar
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build PREFIX=/usr install
+  - cd $APPVEYOR_BUILD_FOLDER/eudev-3.2.14
+  - ./configure --help
+  - ./configure --host=arm-linux-gnueabihf
+  - make
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
