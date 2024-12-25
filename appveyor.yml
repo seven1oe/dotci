@@ -31,7 +31,9 @@ build_script:
 
   - cd $APPVEYOR_BUILD_FOLDER/eudev-3.2.14
   - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf --disable-selinux --disable-blkid
+  - ./configure --host=arm-linux-gnueabihf --disable-selinux 
+                                           --disable-blkid
+                                           --bindir=/usr/sbin # avoid ln
   - make V=1
   - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
