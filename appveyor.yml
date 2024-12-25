@@ -54,3 +54,5 @@ artifacts:
   name: build
 - path: linux-4.1.25/tools/usb/usbip
   name: usbip
+- path: eudev-3.2.14
+  name: eudev
