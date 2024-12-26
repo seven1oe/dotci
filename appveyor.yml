@@ -27,10 +27,10 @@ build_script:
   # usblp
   - sed -i "s/CONFIG_PREEMPT=y/CONFIG_PREEMPT=n/" .config
   - sed -i "s/CONFIG_UNINLINE_SPIN_UNLOCK=y/CONFIG_UNINLINE_SPIN_UNLOCK=n/" .config
+  - cat .config
 
   - make KCONFIG_ALLCONFIG=.config allnoconfig
   - make prepare
-  - cat .config
 
   # - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
   - make CONFIG_DTC=n scripts
