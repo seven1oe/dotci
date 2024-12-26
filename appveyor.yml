@@ -39,7 +39,7 @@ build_script:
   - make V=1 M=drivers/usb/class CONFIG_USB_PRINTER=m modules
   - make V=1 M=drivers/usb/class CONFIG_USB_PRINTER=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
-  - sed -i 's/"unable to claim port\n"/"unable to claim port %d %d\n",udev->portnum,udev->parent->maxchild/' drivers/usb/usbip/stub_dev.c
+  - sed -i 's/"unable to claim port\\n"/"unable to claim port %d %d\\n",udev->portnum,udev->parent->maxchild/' drivers/usb/usbip/stub_dev.c
   - make V=1 M=drivers/usb/usbip CONFIG_USBIP_CORE=m CONFIG_USBIP_HOST=m CONFIG_USBIP_DEBUG=y LOCALVERSION=+ modules
   - make V=1 M=drivers/usb/usbip CONFIG_USBIP_CORE=m CONFIG_USBIP_HOST=m CONFIG_USBIP_DEBUG=y LOCALVERSION=+ INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
