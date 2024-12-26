@@ -1,60 +1,50 @@
 version: 1.0.{build}
 image: Ubuntu2004
 
-environment:
-  APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvVrxkmIikNbILEizwR57dPemc96K7BMDHmf82WicRxbprYY9H7DZJnYymC3IE+iru5jYBZ4f7T3jMIoEurNCpxh0b5xdMjf1JCX975ag2JcAuQYRQivzMrvNXTSSSn1GVp/AA8d6Tz0c403ERsx809OfTK5ntWacAkRYzn/0MiwWevnVlmjUH6eMaDRg3f1oU5PUxFETFWHOFpRJqXBsaLGAhNlcG1TfpXup/jzx/QqdEKBPNZmZLmrd0vDKWLKN4op/jqLA3tMQeDDaalUieJ1XGIy6++w3fWJC5DRb05IvCm8abgcAQard8mKQwP+eM7m4VqnY29LvEsmjyKo1Vw== rsa 2048-082321
-
 install:
   - sudo apt-get update --allow-releaseinfo-change
-  - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc lrzsz gperf
+  - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc
 
 before_build:
-  - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/arm-linux-gnueabihf/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
-  - tar -xJf gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
-
-  - wget https://github.com/kenyapcomau/p910nd/archive/0.97/p910nd-0.97.tar.gz
-  - tar -xzf p910nd-0.97.tar.gz
-
-  - wget https://github.com/eudev-project/eudev/releases/download/v3.2.14/eudev-3.2.14.tar.gz
-  - tar -xzf eudev-3.2.14.tar.gz
+  - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/aarch64-linux-gnu/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
+  - tar -xJf gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu.tar.xz
 
   - wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.25.tar.xz
   - tar -xJf linux-4.1.25.tar.xz
 
-  - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf/bin:$PATH
+  - export PATH=$(pwd)/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin:$PATH
 
 build_script:
-  - cd $APPVEYOR_BUILD_FOLDER/p910nd-0.97
-  - sed -i 's#$(INSTALL) $(INITSCRIPT) $(DESTDIR)$(SCRIPTDIR)/$(PROG)##' Makefile
-  - sed -i 's#$(INSTALL) -m 644 $(CONFIG) $(DESTDIR)$(CONFIGDIR)/$(PROG)##' Makefile
-  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build CROSS=arm-linux-gnueabihf- install
+  - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25
 
-  - cd $APPVEYOR_BUILD_FOLDER/eudev-3.2.14
-  - ./configure --help
-  - ./configure --host=arm-linux-gnueabihf --disable-selinux
-                                           --disable-blkid
-  - make V=1
-  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
-  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build -C src/udev uninstall-hook # rm -Rf $(DESTDIR)$(sbindir)/udevadm
+  - export ARCH=arm64
+  - export CROSS_COMPILE=aarch64-linux-gnu-
 
-  - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
-  - ./autogen.sh
-  - ./configure ac_cv_header_libudev_h=yes  --host=arm-linux-gnueabihf
-                ac_cv_lib_udev_udev_new=yes --prefix=/usr
-                                            --disable-shared
-                                            --without-tcp-wrappers
-  - make V=1 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LIBS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a"
-  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
+  - make defconfig
+  # fix
+  - sed -i "s/CONFIG_JUMP_LABEL=y/CONFIG_JUMP_LABEL=n/" .config
+  - sed -i "s/# CONFIG_MODULE_SIG is not set/CONFIG_MODULE_SIG=y/" .config
+  # usblp
+  - sed -i "s/CONFIG_PREEMPT=y/CONFIG_PREEMPT=n/" .config
+  - sed -i "s/CONFIG_UNINLINE_SPIN_UNLOCK=y/CONFIG_UNINLINE_SPIN_UNLOCK=n/" .config
 
-# on_finish:
-  # - sh: export APPVEYOR_SSH_BLOCK=true
-  # - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+  - make KCONFIG_ALLCONFIG=.config allnoconfig
+  - make prepare
+
+  # - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
+  - make CONFIG_DTC=n scripts
+
+  - sed -i "s/\"lp%d\"/\"lp\"/" drivers/usb/class/usblp.c
+  - make V=1 M=drivers/usb/class CONFIG_USB_PRINTER=m modules
+  - make V=1 M=drivers/usb/class CONFIG_USB_PRINTER=m INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
+
+  - make V=1 M=drivers/usb/usbip CONFIG_USBIP_CORE=m CONFIG_USBIP_HOST=m CONFIG_USBIP_DEBUG=y modules
+  - make V=1 M=drivers/usb/usbip CONFIG_USBIP_CORE=m CONFIG_USBIP_HOST=m CONFIG_USBIP_DEBUG=y INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
+
+  # - make V=1 M=$APPVEYOR_BUILD_FOLDER/kmod modules
+  # - make V=1 M=$APPVEYOR_BUILD_FOLDER/kmod INSTALL_MOD_PATH=$APPVEYOR_BUILD_FOLDER/modules modules_install
 
 test: off
 artifacts:
-- path: build
-  name: build
-- path: linux-4.1.25/tools/usb/usbip
-  name: usbip
-- path: eudev-3.2.14
-  name: eudev
+- path: modules
+  name: modules
