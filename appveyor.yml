@@ -30,6 +30,7 @@ build_script:
 
   - make KCONFIG_ALLCONFIG=.config allnoconfig
   - make prepare
+  - cat .config
 
   # - sed -i "s/YYLTYPE yylloc;/extern YYLTYPE yylloc;/" scripts/dtc/dtc-lexer.lex.c_shipped
   - make CONFIG_DTC=n scripts
