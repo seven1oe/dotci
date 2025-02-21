@@ -34,13 +34,9 @@ build_script:
   - ./autogen.sh
   - ./configure ac_cv_header_libudev_h=yes  --host=arm-linux-gnueabihf
                 ac_cv_lib_udev_udev_new=yes --prefix=/usr
+                                            --disable-shared
                                             --without-tcp-wrappers
-  - sed -e "s#\$(LIBS)#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#"
-        -i libsrc/Makefile
-  - sed -e 's#$(LDADD)#$(top_builddir)/libsrc/.libs/libusbip.a#'
-        -e "s#\$(LIBS)#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#"
-        -i src/Makefile
-  - make V=1 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include"
+  - make V=1 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LIBS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a"
   - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 test: off
