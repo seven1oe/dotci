@@ -3,7 +3,7 @@ image: Ubuntu2004
 
 install:
   - sudo apt-get update --allow-releaseinfo-change
-  - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc lrzsz gperf
+  - sudo apt-get install -y gcc make pkg-config git bison flex libelf-dev libssl-dev libncurses5-dev bc lrzsz
 
 before_build:
   - wget https://releases.linaro.org/components/toolchain/binaries/5.3-2016.05/arm-linux-gnueabihf/gcc-linaro-5.3.1-2016.05-x86_64_arm-linux-gnueabihf.tar.xz
@@ -12,8 +12,8 @@ before_build:
   - wget https://github.com/kenyapcomau/p910nd/archive/0.97/p910nd-0.97.tar.gz
   - tar -xzf p910nd-0.97.tar.gz
 
-  - wget https://github.com/eudev-project/eudev/releases/download/v3.2.14/eudev-3.2.14.tar.gz
-  - tar -xzf eudev-3.2.14.tar.gz
+  - wget https://github.com/illiliti/libudev-zero/archive/1.0.3/libudev-zero-1.0.3.tar.gz
+  - tar -xzf libudev-zero-1.0.3.tar.gz
 
   - wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.25.tar.xz
   - tar -xJf linux-4.1.25.tar.xz
@@ -26,20 +26,21 @@ build_script:
   - sed -i 's#$(INSTALL) -m 644 $(CONFIG) $(DESTDIR)$(CONFIGDIR)/$(PROG)##' Makefile
   - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build CROSS=arm-linux-gnueabihf- install
 
-  - cd $APPVEYOR_BUILD_FOLDER/eudev-3.2.14
-  - ./configure --host=arm-linux-gnueabihf --disable-selinux
-                                           --disable-blkid
-  - make V=1
-  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
-  - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build -C src/udev uninstall-hook # rm -Rf $(DESTDIR)$(sbindir)/udevadm
+  - cd $APPVEYOR_BUILD_FOLDER/libudev-zero-1.0.3
+  - make CC=arm-linux-gnueabihf-gcc AR=arm-linux-gnueabihf-ar
+  - make DESTDIR=$APPVEYOR_BUILD_FOLDER/build PREFIX=/usr install
 
   - cd $APPVEYOR_BUILD_FOLDER/linux-4.1.25/tools/usb/usbip
   - ./autogen.sh
   - ./configure ac_cv_header_libudev_h=yes  --host=arm-linux-gnueabihf
                 ac_cv_lib_udev_udev_new=yes --prefix=/usr
-                                            --disable-shared
                                             --without-tcp-wrappers
-  - make V=1 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include" LIBS="-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a"
+  - sed -e "s#\$(LIBS)#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#"
+        -i libsrc/Makefile
+  - sed -e 's#$(LDADD)#$(top_builddir)/libsrc/.libs/libusbip.a#'
+        -e "s#\$(LIBS)#-pthread $APPVEYOR_BUILD_FOLDER/build/usr/lib/libudev.a#"
+        -i src/Makefile
+  - make V=1 CFLAGS="-I$APPVEYOR_BUILD_FOLDER/build/usr/include"
   - make V=1 DESTDIR=$APPVEYOR_BUILD_FOLDER/build install
 
 test: off
