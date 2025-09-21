@@ -14,8 +14,7 @@ install:
   - python-3.11.9-amd64.exe /quiet /passive TargetDir=%PYTHON_ENV_PATH% Shortcuts=0 Include_doc=0 Include_launcher=0 Include_tcltk=0 Include_test=0
   - set "PATH=%PYTHON_ENV_PATH%;%PYTHON_ENV_PATH%\Scripts;%PATH%"
 
-  - "C:\Program Files\Git\usr\bin\sed.exe" -i "s/os.path.realpath//g" %PYTHON_ENV_PATH%\Lib\venv\__init__.py
-  # - powershell "(Get-Content %PYTHON_ENV_PATH%\Lib\venv\__init__.py) -replace \"os.path.realpath\", \"\" | Set-Content %PYTHON_ENV_PATH%\Lib\venv\__init__.py"
+  - powershell "(Get-Content %PYTHON_ENV_PATH%\Lib\venv\__init__.py) -replace \"os.path.realpath\", \"\" | Set-Content %PYTHON_ENV_PATH%\Lib\venv\__init__.py"
 
 build_script:
   - python --version
