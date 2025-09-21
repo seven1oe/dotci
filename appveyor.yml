@@ -23,7 +23,7 @@ build_script:
   - '%PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install --upgrade pip'
   - '%PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install -r https://github.com/espressif/esp-idf/raw/refs/tags/v5.5/tools/requirements/requirements.core.txt
                                                               -c https://dl.espressif.cn/dl/esp-idf/espidf.constraints.v5.5.txt'
-  - '%PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install -r https://github.com/tuya/TuyaOpen/raw/refs/heads/master/requirements.txt
+  - '%PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install -r https://github.com/tuya/TuyaOpen/raw/refs/heads/master/requirements.txt'
 
 after_build:
   - 7z a %NAME%.7z %PYTHON_ENV_PATH%
