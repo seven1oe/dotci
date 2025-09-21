@@ -1,0 +1,36 @@
+version: 1.0.{build}
+
+environment:
+  PYTHON: 3.11.9
+  PYTHON_ENV_PATH: N:\python311
+
+  CONSTRAINTS: https://dl.espressif.cn/dl/esp-idf/espidf.constraints.v5.5.txt
+  REQUIREMENTS: https://github.com/espressif/esp-idf/raw/refs/tags/v5.5/tools/requirements/requirements.core.txt
+
+init:
+  - IF NOT EXIST "%PYTHON_ENV_PATH:~0,2%" subst "%PYTHON_ENV_PATH:~0,2%" %APPVEYOR_BUILD_FOLDER%\..
+
+install:
+  - curl -fsSL -O "https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe"
+  - python-3.11.9-amd64.exe /uninstall /quiet /passive
+  - python-3.11.9-amd64.exe /quiet /passive TargetDir=%PYTHON_ENV_PATH% Shortcuts=0 Include_doc=0 Include_launcher=0 Include_tcltk=0 Include_test=0
+  - set "PATH=%PYTHON_ENV_PATH%;%PYTHON_ENV_PATH%\Scripts;%PATH%"
+
+  - '"C:\Program Files\Git\usr\bin\sed.exe" -i "s/os.path.realpath//g" %PYTHON_ENV_PATH%\Lib\venv\__init__.py'
+  # - ps: (Get-Content $env:PYTHON_ENV_PATH\Lib\venv\__init__.py) -replace "os.path.realpath", "" | Set-Content $env:PYTHON_ENV_PATH\Lib\venv\__init__.py
+
+build_script:
+  - python --version
+  - python -m venv %PYTHON_ENV_PATH%\venv
+  - '%PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install --upgrade pip'
+  - IF "%CONSTRAINTS%"=="" %PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install -r %REQUIREMENTS%
+  - IF NOT "%CONSTRAINTS%"=="" %PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install -r  %REQUIREMENTS% -c %CONSTRAINTS%
+
+after_build:
+  - 7z a python_env.7z %PYTHON_ENV_PATH%
+  - certutil -hashfile python_env.7z md5
+  # - ps: Get-FileHash -Algorithm MD5 -Path python_env.7z
+
+test: off
+artifacts:
+- path: python_env.7z
