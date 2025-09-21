@@ -23,8 +23,8 @@ build_script:
   - '%PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install -r https://github.com/tuya/TuyaOpen/raw/refs/heads/master/requirements.txt'
 
 after_build:
-  - 7z a python_env.7z %PYTHON_ENV_PATH%
+  - 7z a %NAME%.7z %PYTHON_ENV_PATH%
 
 test: off
 artifacts:
-- path: python_env.7z
+- path: '%NAME%.7z'
