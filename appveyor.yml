@@ -3,6 +3,9 @@ version: 1.0.{build}
 environment:
   PYTHON: 3.11.9
   PYTHON_ENV_PATH: K:\python311
+  
+  CONSTRAINTS: 
+  REQUIREMENTS: https://github.com/tuya/TuyaOpen/raw/refs/heads/master/requirements.txt
 
 init:
   - IF NOT EXIST "%PYTHON_ENV_PATH:~0,2%" subst "%PYTHON_ENV_PATH:~0,2%" %APPVEYOR_BUILD_FOLDER%\..
@@ -20,7 +23,8 @@ build_script:
   - python --version
   - python -m venv %PYTHON_ENV_PATH%\venv
   - '%PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install --upgrade pip'
-  - '%PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install -r https://github.com/tuya/TuyaOpen/raw/refs/heads/master/requirements.txt' # -c ...
+  - IF "%CONSTRAINTS%"=="" %PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install -r %REQUIREMENTS%
+  - IF NOT "%CONSTRAINTS%"=="" %PYTHON_ENV_PATH%\venv\Scripts\python.exe -m pip install -r  %REQUIREMENTS% -c %CONSTRAINTS%
 
 after_build:
   - 7z a python_env.7z %PYTHON_ENV_PATH%
