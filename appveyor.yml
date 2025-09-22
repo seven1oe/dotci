@@ -28,7 +28,7 @@ build_script:
 
 after_build:
   - 7z a python_env.7z %PYTHON_ENV_PATH%
-  - certutil -hashfile python_env.7z md5
+  - powershell "Get-FileHash -Algorithm MD5 -Path python_env.7z"
 
 test: off
 artifacts:
