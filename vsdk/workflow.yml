@@ -61,11 +61,16 @@ jobs:
             7z x -o%GITHUB_WORKSPACE%\%EXTRACT% "%%p\payload.vsix"
         )
 
+    # cannot use new variables within the scope of a "for" loop or use "&&" without "()"
+    # only the last folder will be used
+    # no spaces to the left of ">>"
+    - run: |
+        for /d %%p in ("%EXTRACT%\Windows Kits\10\bin\*") do set "SDK_VERSION=%%~nxp"
+        echo SDK_VERSION=%SDK_VERSION%>> %GITHUB_ENV%
+
     - run: |
         mkdir msi\x86
-        for /d %%p in ("%EXTRACT%\Windows Kits\10\bin\*") do (
-            copy "%%p\x86\MsiDb.exe" msi\x86
-        )
+        copy "%EXTRACT%\Windows Kits\10\bin\%SDK_VERSION%\x86\MsiDb.exe" msi\x86
 
     - run: |
         mkdir Orca
