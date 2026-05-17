@@ -1,0 +1,34 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+
+environment:
+  ROOT: '%APPVEYOR_BUILD_FOLDER%\msys64'
+  BASH: '%ROOT%\msys2_shell.cmd -defterm -no-start -here -c'
+
+  SBC_VERSION: 2.2
+
+install:
+  - curl -fsSL https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz | 7z x -si -so -txz | 7z x -si -ttar
+
+  - '%BASH% "env"'
+  - '%BASH% "pacman -Sy --noconfirm make gcc binutils diffutils"'
+
+before_build:
+  - '%BASH% "wget -q -O - https://www.kernel.org/pub/linux/bluetooth/sbc-%SBC_VERSION%.tar.gz | tar -xzf -"'
+
+build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%\sbc-%SBC_VERSION%
+  - '%BASH% "./configure --help"'
+  - '%BASH% "./configure --prefix=
+                         --enable-static
+                         --disable-shared
+                         --disable-tester"'
+  - '%BASH% "make DESTDIR=$(cygpath -u $APPVEYOR_BUILD_FOLDER)/build install"'
+
+after_build:
+  - xcopy %ROOT%\usr\bin\msys-2.0.dll %APPVEYOR_BUILD_FOLDER%\build\usr\bin
+
+test: off
+artifacts:
+- path: build
+  name: sbc-%SBC_VERSION%
